@@ -9,44 +9,55 @@ MAX_IMG = 2
 
 class Contours ():
     def __init__(self):
+        #Cargar la interfaz gráfica "mainwindow.ui" en MainWindow
         self.MainWindow = uic.loadUi("mainwindow.ui")
+        #Poner el titulo a la ventana MainWindow
         self.MainWindow.setWindowTitle("FIND CONTOURS --- TAREA 1")
+        #Definir la lista de videos opencv
         self.cv_video=[]
+        #Definir la lista de videos en Qt (widgets TextLabel)
         self.qt_video = [self.MainWindow.cap, self.MainWindow.filter_video]
 
+        #Obtener la camara
         self.cam = cv2.VideoCapture(IDCAM)
 
+        #NPI
         blue_image = np.zeros((640,480,3), np.uint8)
         blue_image[:] = (255, 0, 0) #ojo bgr
         for i in range(MAX_IMG):
             self.cv_video.append(blue_image)
 
-        self.MainWindow.sigmax_dial.setMaximum(150)
-        self.MainWindow.sigmay_dial.setMaximum(150)
+        #Indicar los máximos de los diales de la interfaz a 2500 -> Se dividirá entre 1000
+        self.MainWindow.sigmax_dial.setMaximum(2500)
+        self.MainWindow.sigmay_dial.setMaximum(2500)
 
         self.MainWindow.canny_inf_dial.setMaximum(150)
         self.MainWindow.canny_sup_dial.setMaximum(150)
 
+        #Cambiar el valor de los LCD en funcion de los diales
         self.MainWindow.sigmax_dial.valueChanged.connect(self.change_sigmax)
         self.MainWindow.sigmay_dial.valueChanged.connect(self.change_sigmay)
         
         self.MainWindow.canny_inf_dial.valueChanged.connect(self.change_canny_inf)
         self.MainWindow.canny_sup_dial.valueChanged.connect(self.change_canny_sup)
 
+        #TODO Añadir LCD para mostrar numero de cuadrados y rectangulos
+
+        #Establecer el timer del filtro en ms
         self.timer_filter = QtCore.QTimer(self.MainWindow)
         self.timer_filter.timeout.connect(self.make_contour)
-
         self.timer_filter.start(3)
 
+        #Establecer el timer de la camara en 3 ms
         self.timer_frames = QtCore.QTimer(self.MainWindow)
         self.timer_frames.timeout.connect(self.show_frames)
         self.timer_frames.start(3)
 
     def change_sigmax(self):
-        self.MainWindow.sigmax.display(self.MainWindow.sigmax_dial.value()) 
+        self.MainWindow.sigmax.display(self.MainWindow.sigmax_dial.value()/1000) 
 
     def change_sigmay(self):
-        self.MainWindow.sigmay.display(self.MainWindow.sigmay_dial.value())
+        self.MainWindow.sigmay.display(self.MainWindow.sigmay_dial.value()/1000)
 
     def change_canny_inf(self):
         self.MainWindow.canny_inf.display(self.MainWindow.canny_inf_dial.value())
@@ -76,9 +87,24 @@ class Contours ():
         _, cap = self.cam.read()
         self.height, self.width = cap.shape[:2]
         self.cv_video[0] = cap.copy()
-        self.cv_video[1] = cv2.GaussianBlur(self.cv_video[0], (5,5), sigmaX = self.MainWindow.sigmax.value(), sigmaY = self.MainWindow.sigmay.value())
-        
+        #Efecto Blur en la imagen
+        blur = cv2.GaussianBlur(self.cv_video[0], (5,5), sigmaX = self.MainWindow.sigmax.value(), sigmaY = self.MainWindow.sigmay.value())
 
+        #Sacamos los contornos
+        edges = cv2.Canny(blur,self.MainWindow.canny_inf.value(),self.MainWindow.canny_sup.value())
+        contours, hierarchy = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+        
+        rectangles = []
+        squares = []
+
+        #Sacamos la forma de los contornos
+        for contour in contours:
+            cnt = cv2.approxPolyDP(contour, 0.01*cv2.arcLength(contour, True), True)
+            if cnt.size == 4: #TODO hay que hacer que lo elija el usuario
+                rectangles.append(cnt)
+            #and np.pi/2 + 0.16 <= np.angle(cnt) >= np.pi/2 - 0.16
+            #TODO poner un umbral en porcentaje
+        self.cv_video[1] = cv2.drawContours(blur, rectangles, -1, (0,128,0))
 
     def show_frames(self):
         for i in range(len(self.qt_video)):
