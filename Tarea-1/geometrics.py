@@ -37,10 +37,10 @@ class Geometrics():
                     #Sacar el arco que forman los distintos puntos del elemento o el perimetro
                     cnt_len = cv2.arcLength(cnt, True)
                     #Aproximar una curva poligonal dado un porcentaje (segundo parametro)
-                    cnt = cv2.approxPolyDP(cnt, 0.02*cnt_len, True)
+                    cnt = cv2.approxPolyDP(cnt, 0.01*cnt_len, True)
                     #En caso de que tenga 4 puntos (lados), su area sea mayor a 1000 y sea convexo 
                     #se tratará de un cuadrilatero
-                    if len(cnt) == 4 and cv2.contourArea(cnt) > 1000 and cv2.isContourConvex(cnt):
+                    if len(cnt) == 4 and cv2.contourArea(cnt) > 5000 and cv2.isContourConvex(cnt):
                         #Convertir un contorno en pares de puntos
                         cnt = cnt.reshape(-1, 2)
                         #Calcular el coseno mayor de los distintos puntos

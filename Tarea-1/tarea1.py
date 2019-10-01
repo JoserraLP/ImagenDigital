@@ -68,8 +68,12 @@ class Contours ():
 
     def make_contour(self):
         """Metodo para realizar los contornos alrededor del elemento detectado"""
-        #Obtener la imagen de la carama
+        #Obtener la imagen de la camara
         _, cap = self.cam.read()
+
+        squares = []
+        rectangles = []
+        
         #Pasar la imagen a cv_video[0] para que se muestre en el cuadro superior
         self.cv_video[0] = cap.copy()
         #Crear clase para ver que tipos de elementos existen
