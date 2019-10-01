@@ -5,7 +5,9 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 import numpy as np
 import geometrics
 
+#Camara del ordenador
 IDCAM = 0
+#Numero maximo de pantallas
 MAX_IMG = 2
 
 class Contours ():
@@ -22,7 +24,7 @@ class Contours ():
         #Obtener la camara
         self.cam = cv2.VideoCapture(IDCAM)
 
-        #NPI
+        #Añadir imagenes azules para activar la imagen de la pantalla
         blue_image = np.zeros((640,480,3), np.uint8)
         blue_image[:] = (255, 0, 0) #ojo bgr
         for i in range(MAX_IMG):
@@ -64,6 +66,41 @@ class Contours ():
     def change_canny_sup(self):
         self.MainWindow.canny_sup.display(self.MainWindow.canny_sup_dial.value())
 
+    def make_contour(self):
+        """Metodo para realizar los contornos alrededor del elemento detectado"""
+        #Obtener la imagen de la carama
+        _, cap = self.cam.read()
+        #Pasar la imagen a cv_video[0] para que se muestre en el cuadro superior
+        self.cv_video[0] = cap.copy()
+        #Crear clase para ver que tipos de elementos existen
+        geo = geometrics.Geometrics()
+        #image será la imagen en la que se detectarán los elementos
+        image = cap.copy ()
+        #output será la imagen en la que se dibujarán los elementos
+        output = cap.copy()
+        #Sacar los cuadrados y rectángulos de la imagen de entrada
+        squares, rectangles = geo.find_quadrilaterals(image)
+        #Sacar los circulos de la imagen de entrada
+        circles = geo.find_circles(image)
+
+        #Pasar la imagen a cv_video[1] para que se muestre en el cuadro inferior
+        #Cada elemento tendrá un color distinto
+        #Rectangulo: verde, Cuadrado: azul, Circulo: rojo
+        self.cv_video[1] = output
+        self.cv_video[1] = cv2.drawContours(self.cv_video[1], rectangles, -1, (0,128,0), 3)
+        self.cv_video[1] = cv2.drawContours(self.cv_video[1], squares, -1, (128,0,0), 3)
+
+        if circles is not None:
+            for (x,y,r) in circles:
+                cv2.circle(self.cv_video[1], (x,y), r, (0,0,128), 4)
+        else:
+            circles = []
+
+        #Cambiar el valor de los LCD en funcion del número de rectangulos, cuadrados y circulos
+        self.MainWindow.num_rectangulos.display(len(rectangles))
+        self.MainWindow.num_cuadrados.display(len(squares))
+        self.MainWindow.num_circulos.display(len(circles))
+
     def convertCV2ToQimage(self,cv_vid,qt_vid):
         gray_color_table = [QtGui.qRgb(i, i, i) for i in range(256)]
         if cv_vid is None:
@@ -81,38 +118,9 @@ class Contours ():
         pixmap = QtGui.QPixmap()
         pixmap.convertFromImage(image.rgbSwapped())
         qt_vid.setPixmap(pixmap)
-    
-   
-
-    def make_contour(self):
-        _, cap = self.cam.read()
-        self.height, self.width = cap.shape[:2]
-        self.cv_video[0] = cap.copy()
-        
-        geo = geometrics.Geometrics()
-
-        image = cap.copy ()
-        output = image.copy()
-        rectangles = []
-        squares = []
-        squares, rectangles= geo.find_quadrilaterals(image)
-        
-        circles = geo.circles(image)
-        if circles is not None:
-            for (x,y,r) in circles:
-                cv2.circle(output, (x,y), r, (0,255,0), 4)
-        else:
-            circles = []
-
-        self.MainWindow.num_rectangulos.display(len(rectangles))
-        self.MainWindow.num_cuadrados.display(len(squares))
-        self.MainWindow.num_circulos.display(len(circles))
-
-        self.cv_video[1] = output
-        self.cv_video[1] = cv2.drawContours(self.cv_video[1], rectangles, -1, (0,128,0), 3)
-        self.cv_video[1] = cv2.drawContours(self.cv_video[1], squares, -1, (128,128,0), 3)
 
     def show_frames(self):
+        """Método para mostrar las distintas imagenes en los cuadros"""
         for i in range(len(self.qt_video)):
             self.convertCV2ToQimage(self.cv_video[i],self.qt_video[i])       
     
