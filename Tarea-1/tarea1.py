@@ -3,6 +3,7 @@ import cv2
 from PyQt5 import uic, QtGui, QtCore
 from PyQt5.QtWidgets import QApplication, QMainWindow
 import numpy as np
+import geometrics
 
 IDCAM = 0
 MAX_IMG = 2
@@ -40,8 +41,6 @@ class Contours ():
         
         self.MainWindow.canny_inf_dial.valueChanged.connect(self.change_canny_inf)
         self.MainWindow.canny_sup_dial.valueChanged.connect(self.change_canny_sup)
-
-        #TODO Añadir LCD para mostrar numero de cuadrados y rectangulos
 
         #Establecer el timer del filtro en ms
         self.timer_filter = QtCore.QTimer(self.MainWindow)
@@ -82,29 +81,36 @@ class Contours ():
         pixmap = QtGui.QPixmap()
         pixmap.convertFromImage(image.rgbSwapped())
         qt_vid.setPixmap(pixmap)
+    
+   
 
     def make_contour(self):
         _, cap = self.cam.read()
         self.height, self.width = cap.shape[:2]
         self.cv_video[0] = cap.copy()
-        #Efecto Blur en la imagen
-        blur = cv2.GaussianBlur(self.cv_video[0], (5,5), sigmaX = self.MainWindow.sigmax.value(), sigmaY = self.MainWindow.sigmay.value())
-
-        #Sacamos los contornos
-        edges = cv2.Canny(blur,self.MainWindow.canny_inf.value(),self.MainWindow.canny_sup.value())
-        contours, hierarchy = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
         
+        geo = geometrics.Geometrics()
+
+        image = cap.copy ()
+        output = image.copy()
         rectangles = []
         squares = []
+        squares, rectangles= geo.find_quadrilaterals(image)
+        
+        circles = geo.circles(image)
+        if circles is not None:
+            for (x,y,r) in circles:
+                cv2.circle(output, (x,y), r, (0,255,0), 4)
+        else:
+            circles = []
 
-        #Sacamos la forma de los contornos
-        for contour in contours:
-            cnt = cv2.approxPolyDP(contour, 0.01*cv2.arcLength(contour, True), True)
-            if cnt.size == 4: #TODO hay que hacer que lo elija el usuario
-                rectangles.append(cnt)
-            #and np.pi/2 + 0.16 <= np.angle(cnt) >= np.pi/2 - 0.16
-            #TODO poner un umbral en porcentaje
-        self.cv_video[1] = cv2.drawContours(blur, rectangles, -1, (0,128,0))
+        self.MainWindow.num_rectangulos.display(len(rectangles))
+        self.MainWindow.num_cuadrados.display(len(squares))
+        self.MainWindow.num_circulos.display(len(circles))
+
+        self.cv_video[1] = output
+        self.cv_video[1] = cv2.drawContours(self.cv_video[1], rectangles, -1, (0,128,0), 3)
+        self.cv_video[1] = cv2.drawContours(self.cv_video[1], squares, -1, (128,128,0), 3)
 
     def show_frames(self):
         for i in range(len(self.qt_video)):

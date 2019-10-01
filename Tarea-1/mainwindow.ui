@@ -256,7 +256,7 @@
     <property name="geometry">
      <rect>
       <x>700</x>
-      <y>40</y>
+      <y>240</y>
       <width>64</width>
       <height>23</height>
      </rect>
@@ -265,21 +265,21 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>540</x>
-      <y>65</y>
-      <width>67</width>
+      <x>660</x>
+      <y>200</y>
+      <width>80</width>
       <height>17</height>
      </rect>
     </property>
     <property name="text">
-     <string>Contador</string>
+     <string>Contadores</string>
     </property>
    </widget>
    <widget class="QLCDNumber" name="num_rectangulos">
     <property name="geometry">
      <rect>
       <x>700</x>
-      <y>90</y>
+      <y>290</y>
       <width>64</width>
       <height>23</height>
      </rect>
@@ -289,7 +289,7 @@
     <property name="geometry">
      <rect>
       <x>610</x>
-      <y>40</y>
+      <y>245</y>
       <width>75</width>
       <height>17</height>
      </rect>
@@ -302,13 +302,36 @@
     <property name="geometry">
      <rect>
       <x>610</x>
-      <y>90</y>
+      <y>290</y>
       <width>85</width>
       <height>17</height>
      </rect>
     </property>
     <property name="text">
      <string>Rectángulos</string>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="num_circulos">
+    <property name="geometry">
+     <rect>
+      <x>700</x>
+      <y>330</y>
+      <width>64</width>
+      <height>23</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_7">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>335</y>
+      <width>75</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Circulos</string>
     </property>
    </widget>
   </widget>
