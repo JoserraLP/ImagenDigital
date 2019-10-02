@@ -19,44 +19,39 @@ class Geometrics():
 
     def find_quadrilaterals(self,img):
         """Metodo para encontrar los elementos cuadrilateros: rectangulos y cuadrados"""
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         #Aplicar a la imagen de entrada un efecto Blur
         img = cv2.GaussianBlur(img, (5, 5), 0)
         #Definir arrays para los distintos elementos
         squares, rectangles = [], []
-        for gray in cv2.split(img):
-            for thrs in range(0, 255, 26):
-                if thrs == 0:
-                    bin = cv2.Canny(gray, 0, 50, apertureSize=5)
-                    bin = cv2.dilate(bin, None)
-                else:
-                    _retval, bin = cv2.threshold(gray, thrs, 255, cv2.THRESH_BINARY)
-                #Devolver los contornos (Vectores de puntos) y la jerarquia de estos
-                contours, _hierarchy = cv2.findContours(bin, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-                #Recorrer todos los contornos
-                for cnt in contours:
-                    #Sacar el arco que forman los distintos puntos del elemento o el perimetro
-                    cnt_len = cv2.arcLength(cnt, True)
-                    #Aproximar una curva poligonal dado un porcentaje (segundo parametro)
-                    cnt = cv2.approxPolyDP(cnt, 0.01*cnt_len, True)
-                    #En caso de que tenga 4 puntos (lados), su area sea mayor a 1000 y sea convexo 
-                    #se tratará de un cuadrilatero
-                    if len(cnt) == 4 and cv2.contourArea(cnt) > 5000 and cv2.isContourConvex(cnt):
-                        #Convertir un contorno en pares de puntos
-                        cnt = cnt.reshape(-1, 2)
-                        #Calcular el coseno mayor de los distintos puntos
-                        max_cos = np.max([self.angle_cos(cnt[i], cnt[(i+1) % 4], cnt[(i+2) % 4]) for i in range(4)])
-                        #En caso de que el coseno sea menor que 0.1 tenemos que son angulos rectos
-                        if max_cos < 0.1:
-                            #Calcular el rectangulo superior derecho del contorno
-                            (x, y, w, h) = cv2.boundingRect(cnt)
-                            #Sacamos el radio de aspecto del cuadrilatero
-                            ar = w / float(h)
- 
-                            # un cuadrado tendrá una relación de aspecto que es aproximadamente
-                            # igual a uno, de lo contrario, la forma es un rectángulo
-                            squares.append(cnt) if ar >= 0.95 and ar <= 1.05 else rectangles.append(cnt)
-                            
-                        return squares, rectangles
+        canny = cv2.Canny(img, 0, 50, apertureSize=5)
+        #Devolver los contornos (Vectores de puntos) y la jerarquia de estos
+        contours, _hierarchy = cv2.findContours(canny, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+        #Recorrer todos los contornos
+        for cnt in contours:
+            #Sacar el arco que forman los distintos puntos del elemento o el perimetro
+            cnt_len = cv2.arcLength(cnt, True)
+            #Aproximar una curva poligonal dado un porcentaje (segundo parametro)
+            cnt = cv2.approxPolyDP(cnt, 0.01*cnt_len, True)
+            #En caso de que tenga 4 puntos (lados), su area sea mayor a 1000 y sea convexo 
+            #se tratará de un cuadrilatero
+            if len(cnt) == 4 and cv2.contourArea(cnt) > 2000 and cv2.isContourConvex(cnt):
+                #Convertir un contorno en pares de puntos
+                cnt = cnt.reshape(-1, 2)
+                #Calcular el coseno mayor de los distintos puntos
+                max_cos = np.max([self.angle_cos(cnt[i], cnt[(i+1) % 4], cnt[(i+2) % 4]) for i in range(4)])
+                #En caso de que el coseno sea menor que 0.1 tenemos que son angulos rectos
+                if max_cos < 0.1:
+                    #Calcular el rectangulo superior derecho del contorno
+                    (x, y, w, h) = cv2.boundingRect(cnt)
+                    #Sacamos el radio de aspecto del cuadrilatero
+                    ar = w / float(h)
+
+                    # un cuadrado tendrá una relación de aspecto que es aproximadamente
+                    # igual a uno, de lo contrario, la forma es un rectángulo
+                    squares.append(cnt) if ar >= 0.95 and ar <= 1.05 else rectangles.append(cnt)
+                    
+        return squares, rectangles
 
     def find_circles(self, img):
         """Metodo para encontrar circulos"""
