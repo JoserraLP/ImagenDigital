@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 
 import sys
-
+import math
 
 class Geometrics():
     """Clase para definir si un elemento es un rectangulo, cuadrado o circulo"""
@@ -42,16 +42,19 @@ class Geometrics():
                 max_cos = np.max([self.angle_cos(cnt[i], cnt[(i+1) % 4], cnt[(i+2) % 4]) for i in range(4)])
                 #En caso de que el coseno sea menor que 0.1 tenemos que son angulos rectos
                 if max_cos < 0.1:
-                    #Calcular el rectangulo superior derecho del contorno
-                    (x, y, w, h) = cv2.boundingRect(cnt)
-                    #Sacamos el radio de aspecto del cuadrilatero
-                    ar = w / float(h)
-
-                    # un cuadrado tendrá una relación de aspecto que es aproximadamente
-                    # igual a uno, de lo contrario, la forma es un rectángulo
-                    squares.append(cnt) if ar >= 0.95 and ar <= 1.05 else rectangles.append(cnt)
+                    squares.append(cnt) if self.calculate_distances(cnt) == "square" else rectangles.append(cnt)
                     
         return squares, rectangles
+    
+    def calculate_distances (self, cnt):
+        dist = lambda p1, p2: math.sqrt((p2[0]-p1[0])**2 + (p2[1]-p1[1])**2)
+
+        dist1 = dist(cnt[0], cnt[1])
+        print("dist1 {}".format(dist1))
+        dist2 = dist(cnt[0], cnt[3])
+        print("dist2 {}".format(dist2))
+        print("resta {}".format(abs(dist1 - dist2)))
+        return "square" if 0 <= abs(dist1 - dist2) <= 15 else "rectangle"
 
     def find_circles(self, img):
         """Metodo para encontrar circulos"""
