@@ -37,12 +37,19 @@ class Contours ():
         self.MainWindow.canny_inf_dial.setMaximum(150)
         self.MainWindow.canny_sup_dial.setMaximum(150)
 
+        self.MainWindow.rad_spin_box.setMinimum(0.01)
+        self.MainWindow.rad_spin_box.setMaximum(6.28)
+        self.MainWindow.rad_spin_box.setSingleStep(0.01)        
+
         #Cambiar el valor de los LCD en funcion de los diales
         self.MainWindow.sigmax_dial.valueChanged.connect(self.change_sigmax)
         self.MainWindow.sigmay_dial.valueChanged.connect(self.change_sigmay)
         
         self.MainWindow.canny_inf_dial.valueChanged.connect(self.change_canny_inf)
         self.MainWindow.canny_sup_dial.valueChanged.connect(self.change_canny_sup)
+
+        self.MainWindow.rad_spin_box.valueChanged.connect(self.change_rad_spin_box)
+
 
         #Establecer el timer del filtro en ms
         self.timer_filter = QtCore.QTimer(self.MainWindow)
@@ -66,13 +73,15 @@ class Contours ():
     def change_canny_sup(self):
         self.MainWindow.canny_sup.display(self.MainWindow.canny_sup_dial.value())
 
+    def change_rad_spin_box(self):
+        self.MainWindow.rad_spin_box.textFromValue(self.MainWindow.rad_spin_box.value())
+
     def make_contour(self):
         """Metodo para realizar los contornos alrededor del elemento detectado"""
         #Obtener la imagen de la camara
         _, cap = self.cam.read()
 
-        squares = []
-        rectangles = []
+        squares, rectangles = [], []
         
         #Pasar la imagen a cv_video[0] para que se muestre en el cuadro superior
         self.cv_video[0] = cap.copy()
@@ -82,8 +91,10 @@ class Contours ():
         image = cap.copy ()
         #output será la imagen en la que se dibujarán los elementos
         output = cap.copy()
+
         #Sacar los cuadrados y rectángulos de la imagen de entrada
-        squares, rectangles = geo.find_quadrilaterals(image)
+        squares, rectangles = geo.find_quadrilaterals(image, self.MainWindow.sigmax_dial.value()/1000,
+        self.MainWindow.sigmay_dial.value()/1000, self.MainWindow.canny_inf_dial.value(), self.MainWindow.canny_sup_dial.value(), self.MainWindow.rad_spin_box.value())
         #Sacar los circulos de la imagen de entrada
         circles = geo.find_circles(image)
 

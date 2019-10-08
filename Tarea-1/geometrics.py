@@ -17,22 +17,22 @@ class Geometrics():
         return abs( np.dot(d1, d2) / np.sqrt( np.dot(d1, d1)*np.dot(d2, d2)))
 
 
-    def find_quadrilaterals(self,img):
+    def find_quadrilaterals(self,img, sigmax, sigmay, thres1, thres2, rad_aprox):
         """Metodo para encontrar los elementos cuadrilateros: rectangulos y cuadrados"""
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         #Aplicar a la imagen de entrada un efecto Blur
-        img = cv2.GaussianBlur(img, (5, 5), 0)
+        img = cv2.GaussianBlur(img, (5, 5), sigmax, sigmay)
         #Definir arrays para los distintos elementos
         squares, rectangles = [], []
-        canny = cv2.Canny(img, 0, 50, apertureSize=5)
+        canny = cv2.Canny(img, thres1, thres2, apertureSize=5)
         #Devolver los contornos (Vectores de puntos) y la jerarquia de estos
         contours, _hierarchy = cv2.findContours(canny, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
         #Recorrer todos los contornos
         for cnt in contours:
             #Sacar el arco que forman los distintos puntos del elemento o el perimetro
             cnt_len = cv2.arcLength(cnt, True)
-            #Aproximar una curva poligonal dado un porcentaje (segundo parametro)
-            cnt = cv2.approxPolyDP(cnt, 0.01*cnt_len, True)
+            #Aproximar una curva poligonal dado un porcentaje
+            cnt = cv2.approxPolyDP(cnt, rad_aprox*cnt_len, True)
             #En caso de que tenga 4 puntos (lados), su area sea mayor a 1000 y sea convexo 
             #se tratará de un cuadrilatero
             if len(cnt) == 4 and cv2.contourArea(cnt) > 2000 and cv2.isContourConvex(cnt):
@@ -48,12 +48,8 @@ class Geometrics():
     
     def calculate_distances (self, cnt):
         dist = lambda p1, p2: math.sqrt((p2[0]-p1[0])**2 + (p2[1]-p1[1])**2)
-
         dist1 = dist(cnt[0], cnt[1])
-        print("dist1 {}".format(dist1))
         dist2 = dist(cnt[0], cnt[3])
-        print("dist2 {}".format(dist2))
-        print("resta {}".format(abs(dist1 - dist2)))
         return "square" if 0 <= abs(dist1 - dist2) <= 15 else "rectangle"
 
     def find_circles(self, img):
@@ -65,19 +61,8 @@ class Geometrics():
         #el cuarto param es la distancia minima entre centros 
         circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 25)
 
-        #En caso de que exista un circulo se convertira dicho 
+        #En caso de que exista un circulo se convertira dicho circulo
+        # en un int
         if circles is not None:
             circles = np.round(circles[0, :]).astype('int')
             return circles
-
-
-
-
-        
-
- 
-        
-        
-
-
-

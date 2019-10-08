@@ -219,18 +219,21 @@
    <widget class="QDoubleSpinBox" name="rad_spin_box">
     <property name="geometry">
      <rect>
-      <x>400</x>
-      <y>60</y>
+      <x>580</x>
+      <y>70</y>
       <width>63</width>
       <height>26</height>
      </rect>
+    </property>
+    <property name="singleStep">
+     <double>0.010000000000000</double>
     </property>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>10</y>
+      <x>570</x>
+      <y>20</y>
       <width>95</width>
       <height>25</height>
      </rect>
@@ -242,8 +245,8 @@
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>400</x>
-      <y>30</y>
+      <x>580</x>
+      <y>40</y>
       <width>70</width>
       <height>25</height>
      </rect>
@@ -255,7 +258,7 @@
    <widget class="QLCDNumber" name="num_cuadrados">
     <property name="geometry">
      <rect>
-      <x>700</x>
+      <x>710</x>
       <y>240</y>
       <width>64</width>
       <height>23</height>
@@ -278,8 +281,8 @@
    <widget class="QLCDNumber" name="num_rectangulos">
     <property name="geometry">
      <rect>
-      <x>700</x>
-      <y>290</y>
+      <x>710</x>
+      <y>310</y>
       <width>64</width>
       <height>23</height>
      </rect>
@@ -302,7 +305,7 @@
     <property name="geometry">
      <rect>
       <x>610</x>
-      <y>290</y>
+      <y>310</y>
       <width>85</width>
       <height>17</height>
      </rect>
@@ -314,8 +317,8 @@
    <widget class="QLCDNumber" name="num_circulos">
     <property name="geometry">
      <rect>
-      <x>700</x>
-      <y>330</y>
+      <x>710</x>
+      <y>365</y>
       <width>64</width>
       <height>23</height>
      </rect>
@@ -325,7 +328,7 @@
     <property name="geometry">
      <rect>
       <x>610</x>
-      <y>335</y>
+      <y>370</y>
       <width>75</width>
       <height>17</height>
      </rect>
