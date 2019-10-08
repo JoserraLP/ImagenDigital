@@ -245,14 +245,14 @@
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>580</x>
+      <x>570</x>
       <y>40</y>
-      <width>70</width>
+      <width>95</width>
       <height>25</height>
      </rect>
     </property>
     <property name="text">
-     <string>(radianes)</string>
+     <string>cuadrilateros</string>
     </property>
    </widget>
    <widget class="QLCDNumber" name="num_cuadrados">
@@ -335,6 +335,64 @@
     </property>
     <property name="text">
      <string>Circulos</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_8">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>420</y>
+      <width>120</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Leyenda colores:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>450</y>
+      <width>125</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Cuadrados -&gt; Azul</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_10">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>480</y>
+      <width>150</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Rectangulos -&gt; Verde</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_11">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>510</y>
+      <width>110</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string>Circulos -&gt; Rojo</string>
     </property>
    </widget>
   </widget>
