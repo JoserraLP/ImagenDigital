@@ -33,6 +33,7 @@ class Geometrics():
             sigmay -- Valor de Sigma Y para el filtro gaussiano
             thres1 -- Valor del thresold inferior para el filtro Canny
             thres2 -- Valor del thresold superior para el filtro Canny
+            rad_approx -- Valor de aproximacion para la expresion funcional que concierne al calculo de la curva poligonal aproximada
         """
 
         output = img.copy()
@@ -93,7 +94,7 @@ class Geometrics():
         #Sacar los circulos mediante el metodo gradiente de Hough
         #donde el tercer param es la inversa del ratio de resolucion y
         #el cuarto param es la distancia minima entre centros 
-        circles = cv2.HoughCircles(gray_blurred, cv2.HOUGH_GRADIENT, 1, 20, param1=50, param2=30, minRadius=1, maxRadius=40)
+        circles = cv2.HoughCircles(gray_blurred, cv2.HOUGH_GRADIENT, 1, 20, param1=50, param2=30, minRadius=20, maxRadius=40)
 
         #En caso de que exista un circulo se convertira dicho circulo
         # en un int
