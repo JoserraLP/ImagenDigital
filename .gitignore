@@ -330,4 +330,4 @@ ASALocalRun/
 .mfractor/
 
 # .vscode
-*.vscode
+.vscode/
