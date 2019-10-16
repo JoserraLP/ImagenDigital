@@ -1,10 +1,10 @@
 import Modelo
 import OpenGL as GL
 
-class Mundo():
-    """Clase para representar Mundo"""
+class Mundo:
+	"""Clase para representar Mundo"""
 
-    # Distintas opciones del menu.
+	# Distintas opciones del menu.
 	opcionesMenu = {
 		"FONDO_1":1,
 		"FONDO_2":2,
@@ -20,13 +20,12 @@ class Mundo():
 		"FORMA_4":12
 	}
 
-    # Número de vistas diferentes.
-    numCamaras = 3
+	# Número de vistas diferentes.
+	numCamaras = 3
 
-    # Definimos los distintos colores que usaremos para visualizar nuestro Sistema Planetario.
-    # Se encuentra distribuido en RGB
-    colores = [
-        (0.00, 0.00, 0.00),   # 0 - negro
+	# Definimos los distintos colores que usaremos para visualizar nuestro Sistema Planetario.
+	# Se encuentra distribuido en RGB
+	colores = [(0.00, 0.00, 0.00),   # 0 - negro
 		(0.06, 0.25, 0.13), # 1 - verde oscuro
 		(0.10, 0.07, 0.33), # 2 - azul oscuro
 		(1.00, 1.00, 1.00), # 3 - blanco
@@ -39,7 +38,7 @@ class Mundo():
 	angulo = 0.0
 	window = 0
 	sol = Modelo()
-        
+	
 	# Tamaño de los ejes y del alejamiento de Z.
 	tamanio = 0
 	z0 = 0
@@ -60,62 +59,62 @@ class Mundo():
 	# Vistas del Sistema Planetario.
 	iForma = TipoVista()
 	self.iFondo = 0
-    iDibujo = 0
+	iDibujo = 0
 
-    def __init__ (self)
-    	width = 800
-	    height = 800
-	    aspect = width/height
-	    angulo = 0
-	    window = 0
+	def __init__ (self):
+		width = 800
+		height = 800
+		aspect = width/height
+		angulo = 0
+		window = 0
 
-	    # Factor para el tamaño del modelo.
-	    escalaGeneral = 0.005
+		# Factor para el tamaño del modelo.
+		escalaGeneral = 0.005
 
-	    # Rotacion de los modelos.
-	    alpha = 0
-	    beta = 0
+		# Rotacion de los modelos.
+		alpha = 0
+		beta = 0
 
-	    # Variables para la gestion del ratón.
-	    xold = 0
-	    yold = 0 
-	    zoom = 1.0
+		# Variables para la gestion del ratón.
+		xold = 0
+		yold = 0 
+		zoom = 1.0
 
-	    iDibujo = 4
-	    iFondo = 0
+		iDibujo = 4
+		iFondo = 0
 
 
 
-    def drawAxis(self):
+	def drawAxis(self):
 	
-        # Inicializamos
-        GL.glDisable(GL.GL_LIGHTING)
-        GL.glBegin(GL.GL_LINES)
-        GL.glClearColor(0.0, 0.0, 0.0, 0.0)
-        
-        # Eje X Rojo
-        GL.glColor3f(1.0, 0.0, 0.0)
-        GL.glVertex3f(0.0, 0.0, 0.0)
-        GL.glVertex3f((float) self.tamanio, 0.0, 0.0)
+		# Inicializamos
+		GL.glDisable(GL.GL_LIGHTING)
+		GL.glBegin(GL.GL_LINES)
+		GL.glClearColor(0.0, 0.0, 0.0, 0.0)
 
-        # Eje Y Verde
-        GL.glColor3f(0.0, 1.0, 0.0)
-        GL.glVertex3f(0.0, 0.0, 0.0)
-        GL.glVertex3f(0.0, (float) tamanio, 0.0)
+		# Eje X Rojo
+		GL.glColor3f(1.0, 0.0, 0.0)
+		GL.glVertex3f(0.0, 0.0, 0.0)
+		GL.glVertex3f(self.tamanio, 0.0, 0.0)
 
-        # Eje Z Azul
-        GL.glColor3f(0.0, 0.0, 1.0)
-        GL.glVertex3f(0.0, 0.0, 0.0)
-        GL.glVertex3f(0.0, 0.0, (float) tamanio)
+		# Eje Y Verde
+		GL.glColor3f(0.0, 1.0, 0.0)
+		GL.glVertex3f(0.0, 0.0, 0.0)
+		GL.glVertex3f(0.0, tamanio, 0.0)
 
-        GL.glClearColor(0.0, 0.0, 0.0, 0.0)
+		# Eje Z Azul
+		GL.glColor3f(0.0, 0.0, 1.0)
+		GL.glVertex3f(0.0, 0.0, 0.0)
+		GL.glVertex3f(0.0, 0.0, tamanio)
 
-        GL.glEnd()
-        GL.glEnable(GL.GL_LIGHTING)
+		GL.glClearColor(0.0, 0.0, 0.0, 0.0)
+
+		GL.glEnd()
+		GL.glEnable(GL.GL_LIGHTING)
 
 
 
-    def drawModel(self, modelo, escala):
+	def drawModel(self, modelo, escala):
 		GL.glDisable(GL.GL_LIGHTING)
 		modelo.Draw_Model(wired,escala,self.zoom)
 		GL.glEnable(GL.GL_LIGHTING)
@@ -151,10 +150,10 @@ class Mundo():
 			if (state == GL.GLUT_UP):
 				pass
 				if(button==3):
-                	self.zoom -= 0.1
+					self.zoom -= 0.1
 					print("Zoom negativo..." + self.zoom)
 				else:
-	                self.zoom += 0.1
+					self.zoom += 0.1
 					print("Zoom positivo..." + self.zoom)
 			else:
 			# Actualizamos los valores de x, y.
