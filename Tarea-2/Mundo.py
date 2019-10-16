@@ -5,22 +5,33 @@ class Mundo():
     """Clase para representar Mundo"""
 
     # Distintas opciones del menu.
-    opcionesMenu = {FONDO_1, FONDO_2, FONDO_3, FONDO_4,
-				DIBUJO_1, DIBUJO_2, DIBUJO_3, DIBUJO_4,
-				FORMA_1, FORMA_2, FORMA_3, FORMA_4}
+	opcionesMenu = {
+		"FONDO_1":1,
+		"FONDO_2":2,
+		"FONDO_3":3,
+		"FONDO_4":4,
+		"DIBUJO_1":5,
+		"DIBUJO_2":6,
+		"DIBUJO_3":7,
+		"DIBUJO_4":8,
+		"FORMA_1":9,
+		"FORMA_2":10,
+		"FORMA_3":11,
+		"FORMA_4":12
+	}
 
     # Número de vistas diferentes.
     numCamaras = 3
 
     # Definimos los distintos colores que usaremos para visualizar nuestro Sistema Planetario.
     # Se encuentra distribuido en RGB
-    colores = {
-        { 0.00, 0.00, 0.00},   # 0 - negro
-		{ 0.06, 0.25, 0.13}, # 1 - verde oscuro
-		{ 0.10, 0.07, 0.33}, # 2 - azul oscuro
-		{ 1.00, 1.00, 1.00}, # 3 - blanco
-		{ 0.12, 0.50, 0.26}, # 4 - verde claro
-		{ 0.20, 0.14, 0.66}} # 5 - azul claro 
+    colores = [
+        (0.00, 0.00, 0.00),   # 0 - negro
+		(0.06, 0.25, 0.13), # 1 - verde oscuro
+		(0.10, 0.07, 0.33), # 2 - azul oscuro
+		(1.00, 1.00, 1.00), # 3 - blanco
+		(0.12, 0.50, 0.26), # 4 - verde claro
+		(0.20, 0.14, 0.66)] # 5 - azul claro 
 
 	width = 0
 	height = 0
@@ -48,7 +59,7 @@ class Mundo():
 
 	# Vistas del Sistema Planetario.
 	iForma = TipoVista()
-	iFondo = 0
+	self.iFondo = 0
     iDibujo = 0
 
     def __init__ (self)
@@ -158,6 +169,16 @@ class Mundo():
 		self.yold = y
 		GL.glutPostRedisplay()
 
+	def keyPressed (self, key, x, y):
+		if (key == 27): # Tecla ESC
+			GL.glutDestroyWindow(window)
+		elif (key == 32): // Tecla espacio
+			pass
+		elif (key >= 48 and key <= 55):
+			pass
+
+			
+
 	# Funcion que gestiona las pulsaciones en el teclado.
 void Mundo::keyPressed(unsigned char key, int x, int y) {
 	switch (key) {
@@ -217,6 +238,22 @@ switch (opcion) {
 	}
 	glutPostRedisplay()
 }
+
+def onMenu (self, option):
+	if option == self.opcionesMenu["FONDO_1"]:
+		iFondo = 0
+	elif option == self.opcionesMenu["FONDO_2"]:
+		iFondo = 1
+	elif option == self.opcionesMenu["FONDO_3"]:
+		iFondo = 2
+	elif option == self.opcionesMenu["DIBUJO_1"]:
+		iFondo = 3
+	elif option == self.opcionesMenu["DIBUJO_2"]:
+		iFondo = 4
+	elif option == self.opcionesMenu["DIBUJO_3"]:
+		iFondo = 5
+	GL.glutPostRedisplay()
+
 
 
 ////////////////////////////////////////////////////////////////////////////////

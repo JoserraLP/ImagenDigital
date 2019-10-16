@@ -4,8 +4,8 @@ class Cara():
     """Class for representing a Cara"""
 	
     a=0
-	b=0
-	c=0
+    b=0
+    c=0
     normal=TNormal()
 
     def __init__(self, vA, vB, vC, normal=None):
