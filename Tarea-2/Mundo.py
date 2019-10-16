@@ -38,7 +38,7 @@ class Mundo():
 	aspect = 0.0
 	angulo = 0.0
 	window = 0
-	Sol = Modelo()
+	sol = Modelo()
         
 	# Tamaño de los ejes y del alejamiento de Z.
 	tamanio = 0
@@ -142,7 +142,7 @@ class Mundo():
 
 		GL.glFlush() 
 		GL.glutSwapBuffers()
-}
+
 
 
 	# Funcion para gestionar los movimientos del raton.
@@ -177,123 +177,22 @@ class Mundo():
 		elif (key >= 48 and key <= 55):
 			pass
 
-			
+	
+	def onMenu (self, option):
+		if option == self.opcionesMenu["FONDO_1"]:
+			iFondo = 0
+		elif option == self.opcionesMenu["FONDO_2"]:
+			iFondo = 1
+		elif option == self.opcionesMenu["FONDO_3"]:
+			iFondo = 2
+		elif option == self.opcionesMenu["DIBUJO_1"]:
+			iFondo = 3
+		elif option == self.opcionesMenu["DIBUJO_2"]:
+			iFondo = 4
+		elif option == self.opcionesMenu["DIBUJO_3"]:
+			iFondo = 5
+		GL.glutPostRedisplay()
 
-	# Funcion que gestiona las pulsaciones en el teclado.
-void Mundo::keyPressed(unsigned char key, int x, int y) {
-	switch (key) {
-		// Tecla Esc.
-		case 27:	
-			// Cerramos la ventana y salimos.
-			glutDestroyWindow(window)
-			exit(0)
-			break
-        }               
-/*
-		// Tecla espacio	
-		case 32:	
-			
-			break
-
-		default:
-			// Numeros del 0 al 7
-			if(key>=48 && key<=55)	
-                        {}
-			break
-	}
-	*/
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-void Mundo::setVector4(GLfloat *v, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3) {
-	v[0] = v0
-	v[1] = v1
-	v[2] = v2
-	v[3] = v3
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Funcion para activar las distintas opciones que permite el menu.
-void Mundo::onMenu(int opcion) {
-switch (opcion) {
-	case FONDO_1:
-		setIFondo(0)
-		break
-	case FONDO_2:
-		setIFondo(1)
-		break
-	case FONDO_3:
-		setIFondo(2)
-		break
-	case DIBUJO_1:
-		setIDibujo(3)
-		break
-	case DIBUJO_2:
-		setIDibujo(4)
-		break
-	case DIBUJO_3:
-		setIDibujo(5)
-		break
-	}
-	glutPostRedisplay()
-}
-
-def onMenu (self, option):
-	if option == self.opcionesMenu["FONDO_1"]:
-		iFondo = 0
-	elif option == self.opcionesMenu["FONDO_2"]:
-		iFondo = 1
-	elif option == self.opcionesMenu["FONDO_3"]:
-		iFondo = 2
-	elif option == self.opcionesMenu["DIBUJO_1"]:
-		iFondo = 3
-	elif option == self.opcionesMenu["DIBUJO_2"]:
-		iFondo = 4
-	elif option == self.opcionesMenu["DIBUJO_3"]:
-		iFondo = 5
-	GL.glutPostRedisplay()
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-void Mundo::cargarModelo(char *nombre){ 
-	Sol.Load_Model(nombre)
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-int Mundo::getWidth() {
-	return width
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-int Mundo::getHeight() {
-	return height
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void Mundo::setIFondo(int iFondo) {
-	this->iFondo = iFondo
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-int Mundo::getIFondo() {
-	return iFondo
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-void Mundo::setIDibujo(int iDibujo) {
-	this->iDibujo = iDibujo
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-int Mundo::getIDibujo() {
-	return iDibujo
-}
-
+	def loadModel (self, nombre):
+		sol.load(nombre)
 
