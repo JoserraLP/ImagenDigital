@@ -1,22 +1,26 @@
 #include "Mundo.h"
-import OpenGL as GL
+import OpenGL.GL
+import OpenGL.GLUT
+import OpenGL.GLU
 import Mundo as m
-import Sys
+import sys
 
 class Main:
+
+	mundo = m.Mundo()
 
 	def display(self):
 		self.mundo.display()
 
 	def onMenu(self, opcion):
-		mundo.onMenu(opcion)
+		self.mundo.onMenu(opcion)
 
 	# Funcion que crea las distintas opciones que se pueden activar en los menus.
 	def creacionMenu(self):
 		menuFondo, menuDibujo, menuPrincipal, menuForma
 
 		menuFondo = GL.glutCreateMenu(onMenu)
-		GL.glutAddMenuEntry("Negro", )
+		GL.glutAddMenuEntry("Negro", FONDO_1)
 		GL.glutAddMenuEntry("Verde oscuro", FONDO_2)
 		GL.glutAddMenuEntry("Azul oscuro", FONDO_3)
 
@@ -58,26 +62,28 @@ class Main:
 
 
 if __name__ == "__main__":
-	self.mundo = m.Mundo()
+	main = Main()
+
+	mundo = m.Mundo()
 	
-	self.mundo.loadModel(sys.argv[1])
+	mundo.loadModel(sys.argv[1])
 
 	GL.glutInit(argc, argv)
 	
 	# Declaraciones Globales
-	self.InitGL()
+	main.InitGL()
 
 	# Gestion de los botones del raton
-	GL.glutMouseFunc(onMouse)
+	GL.glutMouseFunc(main.onMouse)
 	# Gestion de los movimientos del raton	
-	GL.glutMotionFunc(onMotion)	
+	GL.glutMotionFunc(main.onMotion)	
 	# Dibujo e Idle
-	GL.glutDisplayFunc(display)
-	GL.glutIdleFunc(display)
+	GL.glutDisplayFunc(main.display)
+	GL.glutIdleFunc(main.display)
 	# Menús
-	self.creacionMenu()
+	main.creacionMenu()
 	# Pulsaciones del teclado
-	GL.glutKeyboardFunc(keyPressed)	
+	GL.glutKeyboardFunc(main.keyPressed)	
 		
 	#Repeat.
 	GL.glutMainLoop()	

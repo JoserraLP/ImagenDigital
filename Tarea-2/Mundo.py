@@ -1,5 +1,7 @@
-import Modelo
-import OpenGL as GL
+import Modelo as m
+import OpenGL.GL
+import OpenGL.GLUT
+import OpenGL.GLU
 
 class Mundo:
 	"""Clase para representar Mundo"""
@@ -20,6 +22,8 @@ class Mundo:
 		"FORMA_4":12
 	}
 
+	tipoVista = {'wired'}
+
 	# Número de vistas diferentes.
 	numCamaras = 3
 
@@ -32,56 +36,42 @@ class Mundo:
 		(0.12, 0.50, 0.26), # 4 - verde claro
 		(0.20, 0.14, 0.66)] # 5 - azul claro 
 
-	width = 0
-	height = 0
-	aspect = 0.0
-	angulo = 0.0
-	window = 0
-	sol = Modelo()
+	width, height, window = 0, 0, 0 
+	aspect, angulo = 0.0, 0.0
+	sol = m.Modelo(0,0)
 	
 	# Tamaño de los ejes y del alejamiento de Z.
-	tamanio = 0
-	z0 = 0
+	tamanio, z0 = 0, 0
 
 	# Factor para el tamaño del modelo.
 	escalaGeneral = 0.0
 
 	# Rotacion de los modelos.
-	alpha = 0.0
-	beta = 0.0
+	alpha, beta = 0.0, 0.0
 
 	# Variables para la gestion del ratón.
-	xold = 0
-	yold = 0
+	xold, yold = 0, 0
 	zoom = 0.0
 
 
 	# Vistas del Sistema Planetario.
-	iForma = TipoVista()
-	self.iFondo = 0
-	iDibujo = 0
+	iFondo, iDibujo = 0, 0
 
 	def __init__ (self):
-		width = 800
-		height = 800
+		width, height, angulo, windows = 800, 800, 0, 0
 		aspect = width/height
-		angulo = 0
-		window = 0
 
 		# Factor para el tamaño del modelo.
 		escalaGeneral = 0.005
 
 		# Rotacion de los modelos.
-		alpha = 0
-		beta = 0
+		alpha, beta = 0, 0
 
 		# Variables para la gestion del ratón.
-		xold = 0
-		yold = 0 
+		xold, yold = 0, 0
 		zoom = 1.0
 
-		iDibujo = 4
-		iFondo = 0
+		iDibujo, iFondo = 4, 0
 
 
 
@@ -100,23 +90,21 @@ class Mundo:
 		# Eje Y Verde
 		GL.glColor3f(0.0, 1.0, 0.0)
 		GL.glVertex3f(0.0, 0.0, 0.0)
-		GL.glVertex3f(0.0, tamanio, 0.0)
+		GL.glVertex3f(0.0, self.tamanio, 0.0)
 
 		# Eje Z Azul
 		GL.glColor3f(0.0, 0.0, 1.0)
 		GL.glVertex3f(0.0, 0.0, 0.0)
-		GL.glVertex3f(0.0, 0.0, tamanio)
+		GL.glVertex3f(0.0, 0.0, self.tamanio)
 
 		GL.glClearColor(0.0, 0.0, 0.0, 0.0)
 
 		GL.glEnd()
 		GL.glEnable(GL.GL_LIGHTING)
 
-
-
 	def drawModel(self, modelo, escala):
 		GL.glDisable(GL.GL_LIGHTING)
-		modelo.Draw_Model(wired,escala,self.zoom)
+		modelo.Draw_Model(escala,self.zoom,self.tipoVista)
 		GL.glEnable(GL.GL_LIGHTING)
 
 	def display(self):
@@ -145,17 +133,17 @@ class Mundo:
 
 
 	# Funcion para gestionar los movimientos del raton.
-	def onMouse(button, state, x, y):
+	def onMouse(self, button, state, x, y):
 		if (button == 3) or (button == 4):
 			if (state == GL.GLUT_UP):
 				pass
-				if(button==3):
-					self.zoom -= 0.1
-					print("Zoom negativo..." + self.zoom)
-				else:
-					self.zoom += 0.1
-					print("Zoom positivo..." + self.zoom)
+			if(button==3):
+				self.zoom -= 0.1
+				print("Zoom negativo..." + self.zoom)
 			else:
+				self.zoom += 0.1
+				print("Zoom positivo..." + self.zoom)
+		else:
 			# Actualizamos los valores de x, y.
 			self.xold = x
 			self.yold = y 
@@ -171,7 +159,7 @@ class Mundo:
 	def keyPressed (self, key, x, y):
 		if (key == 27): # Tecla ESC
 			GL.glutDestroyWindow(window)
-		elif (key == 32): // Tecla espacio
+		elif (key == 32): # Tecla espacio
 			pass
 		elif (key >= 48 and key <= 55):
 			pass
@@ -193,5 +181,5 @@ class Mundo:
 		GL.glutPostRedisplay()
 
 	def loadModel (self, nombre):
-		sol.load(nombre)
+		self.sol.load(nombre)
 

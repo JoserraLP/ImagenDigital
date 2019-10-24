@@ -1,2 +1,0 @@
-class TipoVista():
-    tipoVista = {wired}
