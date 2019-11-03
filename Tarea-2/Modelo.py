@@ -108,10 +108,13 @@ class Modelo:
                         faces.append(Face(a, b, c, normal))
         return name, vertices, faces
 
-    def Draw_Model(self, scale_from_editor, zoom, iForma = "wired"):
+    def Draw_Model(self, scale_from_editor, zoom, iForma):
         print("Caras: ", self._numCaras)
         for FaceNumber in range(self._numCaras):
-            glBegin(GL_LINES)
+            if (iForma == "solid"):
+                glBegin(GL_POLYGON)
+            elif (iForma == "wired"):
+                glBegin(GL_LINES)
 
             glVertex3f(self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getX()*scale_from_editor*zoom, 
             self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getY()*scale_from_editor*zoom, 

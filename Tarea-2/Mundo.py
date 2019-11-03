@@ -56,6 +56,7 @@ class Mundo:
 
 	# Vistas del Sistema Planetario.
 	iFondo, iDibujo = 0, 0
+	iForma = "wired"
 
 	def __init__ (self):
 		self.width, self.height, self.angulo, self.windows = 800, 800, 0, 0
@@ -72,6 +73,7 @@ class Mundo:
 		self.zoom = 1.0
 
 		self.iDibujo, self.iFondo = 3, 0
+		self.iForma = "wired"
 
 	def getIFondo(self):
 		return self.iFondo
@@ -114,7 +116,7 @@ class Mundo:
 
 	def drawModel(self, modelo, escala):
 		glDisable(GL_LIGHTING)
-		modelo.Draw_Model(escala,self.zoom,self.tipoVista)
+		modelo.Draw_Model(escala,self.zoom,self.iForma)
 		glEnable(GL_LIGHTING)
 
 	def display(self):
@@ -140,8 +142,6 @@ class Mundo:
 		glFlush() 
 		glutSwapBuffers()
 
-
-
 	# Funcion para gestionar los movimientos del raton.
 	def onMouse(self, button, state, x, y):
 		if (button == 3) or (button == 4):
@@ -149,10 +149,10 @@ class Mundo:
 				pass
 			if(button==3):
 				self.zoom -= 0.1
-				print("Zoom negativo..." + self.zoom)
+				# print("Zoom negativo..." + self.zoom)
 			else:
 				self.zoom += 0.1
-				print("Zoom positivo..." + self.zoom)
+				# print("Zoom positivo..." + self.zoom)
 		else:
 			# Actualizamos los valores de x, y.
 			self.xold = x
@@ -166,15 +166,14 @@ class Mundo:
 		self.yold = y
 		glutPostRedisplay()
 
-	"""
 	def keyPressed (self, key, x, y):
-		if (key == 27): # Tecla ESC
-			glutDestroyWindow(window)
-		elif (key == 32): # Tecla espacio
+		if (key == chr(27).encode()): # Tecla ESC
+			glutDestroyWindow(self.window)
+		elif (key == chr(32).encode()): # Tecla espacio
 			pass
-		elif (key >= 48 and key <= 55):
+		elif (key >= chr(48).encode() and key <= chr(55).encode()):
 			pass
-	"""
+
 	
 	def onMenu (self, option):
 		if option == self.opcionesMenu["FONDO_1"]:
@@ -189,6 +188,10 @@ class Mundo:
 			self.iDibujo = 4
 		elif option == self.opcionesMenu["DIBUJO_3"]:
 			self.iDibujo = 5
+		elif option == self.opcionesMenu["FORMA_1"]:
+			self.iForma = "wired"
+		elif option == self.opcionesMenu["FORMA_2"]:
+			self.iForma = "solid"
 		glutPostRedisplay()
 
 	def loadModel (self, nombre):

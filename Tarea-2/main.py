@@ -35,34 +35,27 @@ class Main:
 		glutAddMenuEntry("Verde claro", self.mundo.opcionesMenu['DIBUJO_2'])
 		glutAddMenuEntry("Azul claro", self.mundo.opcionesMenu['DIBUJO_3'])
 		
+		menuForma = glutCreateMenu(self.mundo.onMenu)
+		glutAddMenuEntry("Wired", self.mundo.opcionesMenu['FORMA_1'])
+		glutAddMenuEntry("Solid", self.mundo.opcionesMenu['FORMA_2'])
+
 		menuPrincipal = glutCreateMenu(self.mundo.onMenu)
 		
-		"""
-		menuForma = glutCreateMenu(self.mundo.onMenu)
-		glutAddMenuEntry("Forma 1", self.mundo.opcionesMenu['FORMA_1'])
-		glutAddMenuEntry("Forma 2", self.mundo.opcionesMenu['FORMA_2'])
-		glutAddMenuEntry("Forma 3", self.mundo.opcionesMenu['FORMA_3'])
-		"""
 
 		glutAddSubMenu("Color de fondo", menuFondo)
 		glutAddSubMenu("Color del dibujo", menuDibujo)
-		# glutAddSubMenu("Forma", menuForma)
+		glutAddSubMenu("Forma", menuForma)
 		# Carga el menú con el boton derecho.
 		glutAttachMenu(GLUT_RIGHT_BUTTON)
 
-	"""
 	def keyPressed(self, key, x, y):
 		self.mundo.keyPressed(key,x,y)
-	"""
 
 	def InitGL(self):
 
 		# Activamos los bufferes
 		glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_RGBA | GLUT_DEPTH | GLUT_ALPHA)	
 		# Establece el tamaño de la ventana.
-		print(self.mundo.getWidth())
-		print("")
-		print(self.mundo.getHeight())
 		glutInitWindowSize(self.mundo.getWidth(), self.mundo.getHeight())	
 		# Establece la posicion inicial (esquina superior izquierda de la ventana).
 		glutInitWindowPosition(100, 100)	
@@ -83,7 +76,7 @@ if __name__ == "__main__":
 	
 	mundo.loadModel(sys.argv[1])
 
-	glutInit(sys.argv, sys.argv[1])
+	glutInit(sys.argv)
 	
 	# Declaraciones Globales
 	main.InitGL()
@@ -98,7 +91,7 @@ if __name__ == "__main__":
 	# Menús
 	main.creacionMenu()
 	# Pulsaciones del teclado
-	# GL.glutKeyboardFunc(main.keyPressed)	
+	glutKeyboardFunc(main.keyPressed)	
 		
 	#Repeat.
 	glutMainLoop()	
