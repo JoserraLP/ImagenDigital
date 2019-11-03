@@ -1,7 +1,7 @@
 import Modelo as m
-import OpenGL.GL
-import OpenGL.GLUT
-import OpenGL.GLU
+from OpenGL.GL import *
+from OpenGL.GLUT import *
+from OpenGL.GLU import *
 
 class Mundo:
 	"""Clase para representar Mundo"""
@@ -58,84 +58,94 @@ class Mundo:
 	iFondo, iDibujo = 0, 0
 
 	def __init__ (self):
-		width, height, angulo, windows = 800, 800, 0, 0
-		aspect = width/height
+		self.width, self.height, self.angulo, self.windows = 800, 800, 0, 0
+		self.aspect = self.width/self.height
 
 		# Factor para el tamaño del modelo.
-		escalaGeneral = 0.005
+		self.escalaGeneral = 0.005
 
 		# Rotacion de los modelos.
-		alpha, beta = 0, 0
+		self.alpha, self.beta = 0, 0
 
 		# Variables para la gestion del ratón.
-		xold, yold = 0, 0
-		zoom = 1.0
+		self.xold, self.yold = 0, 0
+		self.zoom = 1.0
 
-		iDibujo, iFondo = 4, 0
+		self.iDibujo, self.iFondo = 3, 0
 
+	def getIFondo(self):
+		return self.iFondo
 
+	def getIDibujo(self):
+		return self.iDibujo
+
+	def getHeight(self):
+		return self.height
+
+	def getWidth(self):
+		return self.width
 
 	def drawAxis(self):
 	
 		# Inicializamos
-		GL.glDisable(GL.GL_LIGHTING)
-		GL.glBegin(GL.GL_LINES)
-		GL.glClearColor(0.0, 0.0, 0.0, 0.0)
+		glDisable(GL_LIGHTING)
+		glBegin(GL_LINES)
+		glClearColor(0.0, 0.0, 0.0, 0.0)
 
 		# Eje X Rojo
-		GL.glColor3f(1.0, 0.0, 0.0)
-		GL.glVertex3f(0.0, 0.0, 0.0)
-		GL.glVertex3f(self.tamanio, 0.0, 0.0)
+		glColor3f(1.0, 0.0, 0.0)
+		glVertex3f(0.0, 0.0, 0.0)
+		glVertex3f(self.tamanio, 0.0, 0.0)
 
 		# Eje Y Verde
-		GL.glColor3f(0.0, 1.0, 0.0)
-		GL.glVertex3f(0.0, 0.0, 0.0)
-		GL.glVertex3f(0.0, self.tamanio, 0.0)
+		glColor3f(0.0, 1.0, 0.0)
+		glVertex3f(0.0, 0.0, 0.0)
+		glVertex3f(0.0, self.tamanio, 0.0)
 
 		# Eje Z Azul
-		GL.glColor3f(0.0, 0.0, 1.0)
-		GL.glVertex3f(0.0, 0.0, 0.0)
-		GL.glVertex3f(0.0, 0.0, self.tamanio)
+		glColor3f(0.0, 0.0, 1.0)
+		glVertex3f(0.0, 0.0, 0.0)
+		glVertex3f(0.0, 0.0, self.tamanio)
 
-		GL.glClearColor(0.0, 0.0, 0.0, 0.0)
+		glClearColor(0.0, 0.0, 0.0, 0.0)
 
-		GL.glEnd()
-		GL.glEnable(GL.GL_LIGHTING)
+		glEnd()
+		glEnable(GL_LIGHTING)
 
 	def drawModel(self, modelo, escala):
-		GL.glDisable(GL.GL_LIGHTING)
+		glDisable(GL_LIGHTING)
 		modelo.Draw_Model(escala,self.zoom,self.tipoVista)
-		GL.glEnable(GL.GL_LIGHTING)
+		glEnable(GL_LIGHTING)
 
 	def display(self):
-		GL.glClearDepth(1.0)
-		GL.glClearColor(self.colores[self.getIFondo()][0], self.colores[self.getIFondo()][1], self.colores[self.getIFondo()][2], 1.0)
-		GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
+		glClearDepth(1.0)
+		glClearColor(self.colores[self.getIFondo()][0], self.colores[self.getIFondo()][1], self.colores[self.getIFondo()][2], 1.0)
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-		GL.glMatrixMode(GL.GL_PROJECTION)
-		GL.glLoadIdentity()
+		glMatrixMode(GL_PROJECTION)
+		glLoadIdentity()
 
-		GL.glMatrixMode(GL.GL_MODELVIEW)
-		GL.glLoadIdentity()
+		glMatrixMode(GL_MODELVIEW)
+		glLoadIdentity()
 
-		GL.glRotatef(self.alpha, 1.0, 0.0, 0.0)
-		GL.glRotatef(self.beta, 0.0, 1.0, 0.0)
+		glRotatef(self.alpha, 1.0, 0.0, 0.0)
+		glRotatef(self.beta, 0.0, 1.0, 0.0)
 
 		# Establecemos el color del Modelo.
-		GL.glColor3f(self.colores[self.getIDibujo()][0], self.colores[self.getIDibujo()][1], self.colores[self.getIDibujo()][2])
+		glColor3f(self.colores[self.getIDibujo()][0], self.colores[self.getIDibujo()][1], self.colores[self.getIDibujo()][2])
 		
 		# Pintamos el modelo.
-		drawModel(self.Sol, self.escalaGeneral)
+		self.drawModel(self.sol, self.escalaGeneral)
 
-		GL.glFlush() 
-		GL.glutSwapBuffers()
+		glFlush() 
+		glutSwapBuffers()
 
 
 
 	# Funcion para gestionar los movimientos del raton.
 	def onMouse(self, button, state, x, y):
 		if (button == 3) or (button == 4):
-			if (state == GL.GLUT_UP):
+			if (state == GLUT_UP):
 				pass
 			if(button==3):
 				self.zoom -= 0.1
@@ -154,32 +164,38 @@ class Mundo:
 		self.beta = (self.beta + (x - self.xold))
 		self.xold = x
 		self.yold = y
-		GL.glutPostRedisplay()
+		glutPostRedisplay()
 
+	"""
 	def keyPressed (self, key, x, y):
 		if (key == 27): # Tecla ESC
-			GL.glutDestroyWindow(window)
+			glutDestroyWindow(window)
 		elif (key == 32): # Tecla espacio
 			pass
 		elif (key >= 48 and key <= 55):
 			pass
-
+	"""
 	
 	def onMenu (self, option):
 		if option == self.opcionesMenu["FONDO_1"]:
-			iFondo = 0
+			self.iFondo = 0
 		elif option == self.opcionesMenu["FONDO_2"]:
-			iFondo = 1
+			self.iFondo = 1
 		elif option == self.opcionesMenu["FONDO_3"]:
-			iFondo = 2
+			self.iFondo = 2
 		elif option == self.opcionesMenu["DIBUJO_1"]:
-			iFondo = 3
+			self.iDibujo = 3
 		elif option == self.opcionesMenu["DIBUJO_2"]:
-			iFondo = 4
+			self.iDibujo = 4
 		elif option == self.opcionesMenu["DIBUJO_3"]:
-			iFondo = 5
-		GL.glutPostRedisplay()
+			self.iDibujo = 5
+		glutPostRedisplay()
 
 	def loadModel (self, nombre):
-		self.sol.load(nombre)
+		_, vertices, faces = self.sol.load(nombre)
+		self.sol.numCaras = len(faces)
+		self.sol.numVertices = len(vertices)
+		self.sol.ListaCaras = faces
+		self.sol.ListaPuntos3D = vertices
+		
 

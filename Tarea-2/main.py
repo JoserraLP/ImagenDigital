@@ -1,9 +1,9 @@
-#include "Mundo.h"
-import OpenGL.GL
-import OpenGL.GLUT
-import OpenGL.GLU
 import Mundo as m
 import sys
+
+from OpenGL.GL import *
+from OpenGL.GLUT import *
+from OpenGL.GLU import *
 
 class Main:
 
@@ -15,50 +15,65 @@ class Main:
 	def onMenu(self, opcion):
 		self.mundo.onMenu(opcion)
 
-	# Funcion que crea las distintas opciones que se pueden activar en los menus.
-	def creacionMenu(self):
-		menuFondo, menuDibujo, menuPrincipal, menuForma
-
-		menuFondo = GL.glutCreateMenu(onMenu)
-		GL.glutAddMenuEntry("Negro", FONDO_1)
-		GL.glutAddMenuEntry("Verde oscuro", FONDO_2)
-		GL.glutAddMenuEntry("Azul oscuro", FONDO_3)
-
-		menuDibujo = glutCreateMenu(onMenu)
-		GL.glutAddMenuEntry("Blanco", DIBUJO_1)
-		GL.glutAddMenuEntry("Verde claro", DIBUJO_2)
-		GL.glutAddMenuEntry("Azul claro", DIBUJO_3)
-		menuPrincipal = GL.glutCreateMenu(onMenu)
-		GL.glutAddSubMenu("Color de fondo", menuFondo)
-		GL.glutAddSubMenu("Color del dibujo", menuDibujo)
-		# Carga el menú con el boton derecho.
-		GL.glutAttachMenu(GL.GLUT_RIGHT_BUTTON)
-
 	def onMotion(self, x, y):
 		self.mundo.onMotion(x,y)
 
 	def onMouse(self, button, state, x, y):
 		self.mundo.onMouse(button,state,x,y)
 
+	# Funcion que crea las distintas opciones que se pueden activar en los menus.
+	def creacionMenu(self):
+		menuFondo, menuDibujo, menuPrincipal, menuForma = 0,0,0,0
+
+		menuFondo = glutCreateMenu(self.mundo.onMenu)
+		glutAddMenuEntry("Negro", self.mundo.opcionesMenu['FONDO_1'])
+		glutAddMenuEntry("Verde oscuro", self.mundo.opcionesMenu['FONDO_2'])
+		glutAddMenuEntry("Azul oscuro", self.mundo.opcionesMenu['FONDO_3'])
+
+		menuDibujo = glutCreateMenu(self.mundo.onMenu)
+		glutAddMenuEntry("Blanco", self.mundo.opcionesMenu['DIBUJO_1'])
+		glutAddMenuEntry("Verde claro", self.mundo.opcionesMenu['DIBUJO_2'])
+		glutAddMenuEntry("Azul claro", self.mundo.opcionesMenu['DIBUJO_3'])
+		
+		menuPrincipal = glutCreateMenu(self.mundo.onMenu)
+		
+		"""
+		menuForma = glutCreateMenu(self.mundo.onMenu)
+		glutAddMenuEntry("Forma 1", self.mundo.opcionesMenu['FORMA_1'])
+		glutAddMenuEntry("Forma 2", self.mundo.opcionesMenu['FORMA_2'])
+		glutAddMenuEntry("Forma 3", self.mundo.opcionesMenu['FORMA_3'])
+		"""
+
+		glutAddSubMenu("Color de fondo", menuFondo)
+		glutAddSubMenu("Color del dibujo", menuDibujo)
+		# glutAddSubMenu("Forma", menuForma)
+		# Carga el menú con el boton derecho.
+		glutAttachMenu(GLUT_RIGHT_BUTTON)
+
+	"""
 	def keyPressed(self, key, x, y):
 		self.mundo.keyPressed(key,x,y)
+	"""
 
 	def InitGL(self):
 
 		# Activamos los bufferes
-		GL.glutInitDisplayMode(GL.GLUT_DOUBLE | GL.GLUT_RGB | GL.GLUT_RGBA | GL.GLUT_DEPTH | GL.GLUT_ALPHA)	
+		glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_RGBA | GLUT_DEPTH | GLUT_ALPHA)	
 		# Establece el tamaño de la ventana.
-		GL.glutInitWindowSize(self.mundo.getWidth(), self.mundo.getHeight())	
-		#	Establece la posicion inicial (esquina superior izquierda de la ventana).
-		GL.glutInitWindowPosition(100, 100)	
-		GL.glutCreateWindow("Mundo")
-		GL.glShadeModel(GL.GL_SMOOTH) 
-		GL.glEnable(GL.GL_LIGHTING) 
-		GL.glEnable(GL.GL_NORMALIZE) 
-		GL.glEnable(GL.GL_CULL_FACE)
-		GL.glEnable(GL.GL_DEPTH_TEST)
-		GL.glDepthMask(GL.GL_TRUE)
-		GL.glDepthFunc(GL.GL_LESS)
+		print(self.mundo.getWidth())
+		print("")
+		print(self.mundo.getHeight())
+		glutInitWindowSize(self.mundo.getWidth(), self.mundo.getHeight())	
+		# Establece la posicion inicial (esquina superior izquierda de la ventana).
+		glutInitWindowPosition(100, 100)	
+		glutCreateWindow("Mundo")
+		glShadeModel(GL_SMOOTH) 
+		glEnable(GL_LIGHTING) 
+		glEnable(GL_NORMALIZE) 
+		glEnable(GL_CULL_FACE)
+		glEnable(GL_DEPTH_TEST)
+		glDepthMask(GL_TRUE)
+		glDepthFunc(GL_LESS)
 
 
 if __name__ == "__main__":
@@ -68,22 +83,22 @@ if __name__ == "__main__":
 	
 	mundo.loadModel(sys.argv[1])
 
-	GL.glutInit(argc, argv)
+	glutInit(sys.argv, sys.argv[1])
 	
 	# Declaraciones Globales
 	main.InitGL()
 
 	# Gestion de los botones del raton
-	GL.glutMouseFunc(main.onMouse)
+	glutMouseFunc(main.onMouse)
 	# Gestion de los movimientos del raton	
-	GL.glutMotionFunc(main.onMotion)	
+	glutMotionFunc(main.onMotion)	
 	# Dibujo e Idle
-	GL.glutDisplayFunc(main.display)
-	GL.glutIdleFunc(main.display)
+	glutDisplayFunc(main.display)
+	glutIdleFunc(main.display)
 	# Menús
 	main.creacionMenu()
 	# Pulsaciones del teclado
-	GL.glutKeyboardFunc(main.keyPressed)	
+	# GL.glutKeyboardFunc(main.keyPressed)	
 		
 	#Repeat.
-	GL.glutMainLoop()	
+	glutMainLoop()	

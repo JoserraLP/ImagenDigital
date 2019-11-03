@@ -1,7 +1,9 @@
 import re
 
 from point_face import Point3D, Face
-import OpenGL.GL as GL
+from OpenGL.GL import *
+from OpenGL.GLUT import *
+from OpenGL.GLU import *
 
 
 class Modelo:
@@ -13,7 +15,7 @@ class Modelo:
     def __init__(self, nCaras, nVertices):
         self._numCaras = nCaras
         self._numVertices = nVertices
-        alpha, beta = 0, 0
+        self.alpha, self.beta = 0, 0
 
     def setVector(self, vector, v0, v1, v2, v3):
         vector[0] = v0
@@ -50,7 +52,6 @@ class Modelo:
             list: List of faces (Face)
         """
 
-        num_vertices, num_faces = 0, 0
         vertices, faces = list(), list()
         name = ''
 
@@ -63,11 +64,11 @@ class Modelo:
                 if line[:5] == 'Named':
                     name = re.search('"(.*)"', line).groups()[0]
                     line = next(file)
-                    _, num_vertices, _, _, num_faces = regex((str, int, str, str, int), 
+                    _, _numVertices, _, _, _numCaras = regex((str, int, str, str, int), 
                     'Tri-mesh, Vertices:(\s+)(\d+)(\s+)Faces:(\s+)(\d+)', line)
 
                 if line == 'Vertex list:':
-                    for n in range(0, num_vertices):
+                    for n in range(0, _numVertices):
                         line = next(file)
 
                         _, x = regex((str, float), 'X:(\s*)(-?\d*\.?\d*)', line)
@@ -77,7 +78,7 @@ class Modelo:
                         vertices.append(Point3D(x, y, z))
 
                 if line == 'Face list:':
-                    for n in range(0, num_faces):
+                    for n in range(0, _numCaras):
                         line = next(file)
                         if line.strip() == '' or 'Page' in line or 'Smoothing:' in line:
                             continue
@@ -105,18 +106,28 @@ class Modelo:
                         normal.z /= l
 
                         faces.append(Face(a, b, c, normal))
-
         return name, vertices, faces
 
     def Draw_Model(self, scale_from_editor, zoom, iForma = "wired"):
-        print("Caras: {}", self._numCaras)
-        print(scale_from_editor)
-        for FaceNumber in self._numCaras:
-            GL.glBegin(GL.GL_LINES)
-            GL.glVertex3f(self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getX()*scale_from_editor*zoom, self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getY()*scale_from_editor*zoom, self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getZ()*scale_from_editor*zoom)
-            GL.glVertex3f(self.ListaPuntos3D[self.ListaCaras[FaceNumber].getB()].getX()*scale_from_editor*zoom, self.ListaPuntos3D[self.ListaCaras[FaceNumber].getB()].getY()*scale_from_editor*zoom, self.ListaPuntos3D[self.ListaCaras[FaceNumber].getB()].getZ()*scale_from_editor*zoom)
-            GL.glVertex3f(self.ListaPuntos3D[self.ListaCaras[FaceNumber].getC()].getX()*scale_from_editor*zoom, self.ListaPuntos3D[self.ListaCaras[FaceNumber].getC()].getY()*scale_from_editor*zoom, self.ListaPuntos3D[self.ListaCaras[FaceNumber].getC()].getZ()*scale_from_editor*zoom)
+        print("Caras: ", self._numCaras)
+        for FaceNumber in range(self._numCaras):
+            glBegin(GL_LINES)
+
+            glVertex3f(self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getX()*scale_from_editor*zoom, 
+            self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getY()*scale_from_editor*zoom, 
+            self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getZ()*scale_from_editor*zoom)
+                        
+            glVertex3f(self.ListaPuntos3D[self.ListaCaras[FaceNumber].getB()].getX()*scale_from_editor*zoom, 
+            self.ListaPuntos3D[self.ListaCaras[FaceNumber].getB()].getY()*scale_from_editor*zoom, 
+            self.ListaPuntos3D[self.ListaCaras[FaceNumber].getB()].getZ()*scale_from_editor*zoom)
+
+            glVertex3f(self.ListaPuntos3D[self.ListaCaras[FaceNumber].getC()].getX()*scale_from_editor*zoom, 
+            self.ListaPuntos3D[self.ListaCaras[FaceNumber].getC()].getY()*scale_from_editor*zoom, 
+            self.ListaPuntos3D[self.ListaCaras[FaceNumber].getC()].getZ()*scale_from_editor*zoom)
         
-            GL.glVertex3f(self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getX()*scale_from_editor*zoom, self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getY()*scale_from_editor*zoom, self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getZ()*scale_from_editor*zoom)                    
-            GL.glEnd()
+            glVertex3f(self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getX()*scale_from_editor*zoom, 
+            self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getY()*scale_from_editor*zoom,
+            self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getZ()*scale_from_editor*zoom)                    
+            
+            glEnd()
 

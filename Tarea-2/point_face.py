@@ -62,6 +62,15 @@ class Point3D:
 
         return cls(tuple[0], tuple[1], tuple[2])
 
+    def getX(self):
+        return self.x
+
+    def getY(self):
+        return self.y
+
+    def getZ(self):
+        return self.z
+
 
 class Rotation:
     """Rotation in Euler angles
@@ -129,6 +138,14 @@ class Face:
 
         return cls(tuple[0], tuple[1], tuple[2], tuple[3])
 
+    def getA(self):
+        return self.a
+
+    def getB(self):
+        return self.b
+
+    def getC(self):
+        return self.c
 
 class Transform:
     """Transform holds position, scaling and rotation for an object in the World
