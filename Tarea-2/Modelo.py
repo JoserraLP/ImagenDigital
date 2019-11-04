@@ -9,19 +9,24 @@ from OpenGL.GLU import *
 class Modelo:
     alpha, beta, _numCaras, _numVertices = 0,0,0,0
 
+    """
+    # Planetas JSON
+    radio, wRotAstro, wRotProp, tamanio = 0.0, 0.0, 0.0, 0.0 
+    nombre, l = "", ""
+    """
+
     #Lista de puntos 3D y Lista de caras
     ListaPuntos3D, ListaCaras = [], []
 
     def __init__(self, nCaras, nVertices):
         self._numCaras = nCaras
         self._numVertices = nVertices
-        self.alpha, self.beta = 0, 0
-
+        
     def setVector(self, vector, v0, v1, v2, v3):
-        vector[0] = v0
-        vector[1] = v1
-        vector[2] = v2
-        vector[3] = v3
+        vector.append(v0)
+        vector.append(v1)
+        vector.append(v2)
+        vector.append(v3)
 
     @property
     def numCaras(self):
@@ -109,25 +114,47 @@ class Modelo:
         return name, vertices, faces
 
     def Draw_Model(self, scale_from_editor, zoom, iForma):
-        print("Caras: ", self._numCaras)
+        # print("Caras: ", self._numCaras)
+        smooth = False
         for FaceNumber in range(self._numCaras):
             if (iForma == "solid"):
+                glDisable(GL_LIGHTING)
                 glBegin(GL_POLYGON)
             elif (iForma == "wired"):
+                glDisable(GL_LIGHTING)
                 glBegin(GL_LINES)
+            elif (iForma == "flat"):
+                glShadeModel(GL_FLAT)
+                glBegin(GL_POLYGON)
+                # Normal
+                glNormal3f(self.ListaCaras[FaceNumber].getNormal().getX(), self.ListaCaras[FaceNumber].getNormal().getY(), self.ListaCaras[FaceNumber].getNormal().getZ())
+            elif (iForma == "smooth"):
+                glShadeModel(GL_SMOOTH)
+                glBegin(GL_POLYGON)
+                smooth = True
+               
+            # Normals
+            if (smooth):
+                glNormal3f(self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getX(), self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getY(), self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getZ())
 
             glVertex3f(self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getX()*scale_from_editor*zoom, 
             self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getY()*scale_from_editor*zoom, 
             self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getZ()*scale_from_editor*zoom)
-                        
+
+            if (smooth):
+                glNormal3f(self.ListaPuntos3D[self.ListaCaras[FaceNumber].getB()].getX(), self.ListaPuntos3D[self.ListaCaras[FaceNumber].getB()].getY(), self.ListaPuntos3D[self.ListaCaras[FaceNumber].getB()].getZ())
+
             glVertex3f(self.ListaPuntos3D[self.ListaCaras[FaceNumber].getB()].getX()*scale_from_editor*zoom, 
             self.ListaPuntos3D[self.ListaCaras[FaceNumber].getB()].getY()*scale_from_editor*zoom, 
             self.ListaPuntos3D[self.ListaCaras[FaceNumber].getB()].getZ()*scale_from_editor*zoom)
 
+            if (smooth):
+                glNormal3f(self.ListaPuntos3D[self.ListaCaras[FaceNumber].getC()].getX(), self.ListaPuntos3D[self.ListaCaras[FaceNumber].getC()].getY(), self.ListaPuntos3D[self.ListaCaras[FaceNumber].getC()].getZ())
+
             glVertex3f(self.ListaPuntos3D[self.ListaCaras[FaceNumber].getC()].getX()*scale_from_editor*zoom, 
             self.ListaPuntos3D[self.ListaCaras[FaceNumber].getC()].getY()*scale_from_editor*zoom, 
             self.ListaPuntos3D[self.ListaCaras[FaceNumber].getC()].getZ()*scale_from_editor*zoom)
-        
+            
             glVertex3f(self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getX()*scale_from_editor*zoom, 
             self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getY()*scale_from_editor*zoom,
             self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getZ()*scale_from_editor*zoom)                    

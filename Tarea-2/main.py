@@ -5,6 +5,21 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 
+opcionesMenu = {
+	"FONDO_1":1,
+	"FONDO_2":2,
+	"FONDO_3":3,
+	"FONDO_4":4,
+	"DIBUJO_1":5,
+	"DIBUJO_2":6,
+	"DIBUJO_3":7,
+	"DIBUJO_4":8,
+	"FORMA_1":9,
+	"FORMA_2":10,
+	"FORMA_3":11,
+	"FORMA_4":12
+}
+
 class Main:
 
 	mundo = m.Mundo()
@@ -38,13 +53,14 @@ class Main:
 		menuForma = glutCreateMenu(self.mundo.onMenu)
 		glutAddMenuEntry("Wired", self.mundo.opcionesMenu['FORMA_1'])
 		glutAddMenuEntry("Solid", self.mundo.opcionesMenu['FORMA_2'])
+		glutAddMenuEntry("Flat", self.mundo.opcionesMenu['FORMA_3'])
+		glutAddMenuEntry("Smooth", self.mundo.opcionesMenu['FORMA_4'])
 
 		menuPrincipal = glutCreateMenu(self.mundo.onMenu)
 		
-
 		glutAddSubMenu("Color de fondo", menuFondo)
 		glutAddSubMenu("Color del dibujo", menuDibujo)
-		glutAddSubMenu("Forma", menuForma)
+		glutAddSubMenu("Forma del dibujo", menuForma)
 		# Carga el menú con el boton derecho.
 		glutAttachMenu(GLUT_RIGHT_BUTTON)
 
@@ -59,7 +75,7 @@ class Main:
 		glutInitWindowSize(self.mundo.getWidth(), self.mundo.getHeight())	
 		# Establece la posicion inicial (esquina superior izquierda de la ventana).
 		glutInitWindowPosition(100, 100)	
-		glutCreateWindow("Mundo")
+		glutCreateWindow(b"Mundo")
 		glShadeModel(GL_SMOOTH) 
 		glEnable(GL_LIGHTING) 
 		glEnable(GL_NORMALIZE) 

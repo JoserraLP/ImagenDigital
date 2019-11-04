@@ -147,6 +147,9 @@ class Face:
     def getC(self):
         return self.c
 
+    def getNormal(self):
+        return self.normal
+
 class Transform:
     """Transform holds position, scaling and rotation for an object in the World
 

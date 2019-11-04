@@ -6,24 +6,6 @@ from OpenGL.GLU import *
 class Mundo:
 	"""Clase para representar Mundo"""
 
-	# Distintas opciones del menu.
-	opcionesMenu = {
-		"FONDO_1":1,
-		"FONDO_2":2,
-		"FONDO_3":3,
-		"FONDO_4":4,
-		"DIBUJO_1":5,
-		"DIBUJO_2":6,
-		"DIBUJO_3":7,
-		"DIBUJO_4":8,
-		"FORMA_1":9,
-		"FORMA_2":10,
-		"FORMA_3":11,
-		"FORMA_4":12
-	}
-
-	tipoVista = {'wired'}
-
 	# Número de vistas diferentes.
 	numCamaras = 3
 
@@ -75,6 +57,22 @@ class Mundo:
 		self.iDibujo, self.iFondo = 3, 0
 		self.iForma = "wired"
 
+		# Distintas opciones del menu.
+		self.opcionesMenu = {
+			"FONDO_1":1,
+			"FONDO_2":2,
+			"FONDO_3":3,
+			"FONDO_4":4,
+			"DIBUJO_1":5,
+			"DIBUJO_2":6,
+			"DIBUJO_3":7,
+			"DIBUJO_4":8,
+			"FORMA_1":9,
+			"FORMA_2":10,
+			"FORMA_3":11,
+			"FORMA_4":12
+		}
+
 	def getIFondo(self):
 		return self.iFondo
 
@@ -115,9 +113,9 @@ class Mundo:
 		glEnable(GL_LIGHTING)
 
 	def drawModel(self, modelo, escala):
-		glDisable(GL_LIGHTING)
+    
 		modelo.Draw_Model(escala,self.zoom,self.iForma)
-		glEnable(GL_LIGHTING)
+		# glEnable(GL_LIGHTING)
 
 	def display(self):
 		glClearDepth(1.0)
@@ -135,7 +133,21 @@ class Mundo:
 
 		# Establecemos el color del Modelo.
 		glColor3f(self.colores[self.getIDibujo()][0], self.colores[self.getIDibujo()][1], self.colores[self.getIDibujo()][2])
-		
+
+		luzdifusa, luzambiente, luzspecular, posicion0 = [], [], [], []
+
+		self.sol.setVector(luzdifusa, 1.0, 1.0, 1.0, 1.0)
+		self.sol.setVector(luzambiente, 0.50, 0.50, 0.50, 1.0)
+		self.sol.setVector(luzspecular, 0.20, 0.20, 0.20, 1.0)
+		self.sol.setVector(posicion0, 5.0, 5.0, 6.0, 0.0)
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, luzdifusa)
+		glLightfv(GL_LIGHT0, GL_AMBIENT, luzambiente)
+		glLightfv(GL_LIGHT0, GL_SPECULAR, luzspecular)
+		glLightfv(GL_LIGHT0, GL_POSITION, posicion0)
+
+		glEnable(GL_LIGHTING)
+		glEnable(GL_LIGHT0)
+
 		# Pintamos el modelo.
 		self.drawModel(self.sol, self.escalaGeneral)
 
@@ -169,11 +181,6 @@ class Mundo:
 	def keyPressed (self, key, x, y):
 		if (key == chr(27).encode()): # Tecla ESC
 			glutDestroyWindow(self.window)
-		elif (key == chr(32).encode()): # Tecla espacio
-			pass
-		elif (key >= chr(48).encode() and key <= chr(55).encode()):
-			pass
-
 	
 	def onMenu (self, option):
 		if option == self.opcionesMenu["FONDO_1"]:
@@ -192,7 +199,12 @@ class Mundo:
 			self.iForma = "wired"
 		elif option == self.opcionesMenu["FORMA_2"]:
 			self.iForma = "solid"
+		elif option == self.opcionesMenu["FORMA_3"]:
+			self.iForma = "flat"
+		elif option == self.opcionesMenu["FORMA_4"]:
+	  		self.iForma = "smooth"
 		glutPostRedisplay()
+		return option
 
 	def loadModel (self, nombre):
 		_, vertices, faces = self.sol.load(nombre)
