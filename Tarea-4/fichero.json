@@ -1,0 +1,182 @@
+{
+  "focos": [
+    {
+    "brillo"      : 100000,
+    "luzdifusa"   : [1.0, 1.0, 1.0, 1.0],
+    "luzambiente" : [0.0, 0.0, 0.0, 1.0],
+    "luzspecular": [1.0, 1.0, 1.0, 1.0],
+    "posicion"    : [0.0, 0.0, 1.0, 0.0]
+    },{
+    "brillo"      : 20,
+    "luzdifusa"   : [0.5, 0.8, 0.0, 1.0],
+    "luzambiente" : [0.50, 0.50, 0.50, 1.0],
+    "luzspecular": [0.20, 0.20, 0.20, 1.0],
+    "posicion"    : [2.0, 1.0, -6.0, 0.0]
+  },{
+    "brillo"      : 20,
+    "luzdifusa"   : [0.5, 0.8, 0.0, 1.0],
+    "luzambiente" : [0.50, 0.50, 0.50, 1.0],
+    "luzspecular": [0.20, 0.20, 0.20, 1.0],
+    "posicion"    : [2.0, 1.0, -6.0, 0.0]
+  },{
+    "brillo"      : 20,
+    "luzdifusa"   : [0.5, 0.8, 0.0, 1.0],
+    "luzambiente" : [0.50, 0.50, 0.50, 1.0],
+    "luzspecular": [0.20, 0.20, 0.20, 1.0],
+    "posicion"    : [2.0, 1.0, -6.0, 0.0]
+  },{
+    "brillo"      : 20,
+    "luzdifusa"   : [0.5, 0.8, 0.0, 1.0],
+    "luzambiente" : [0.50, 0.50, 0.50, 1.0],
+    "luzspecular": [0.20, 0.20, 0.20, 1.0],
+    "posicion"    : [2.0, 1.0, -6.0, 0.0]
+  },{
+    "brillo"      : 20,
+    "luzdifusa"   : [0.5, 0.8, 0.0, 1.0],
+    "luzambiente" : [0.50, 0.50, 0.50, 1.0],
+    "luzspecular": [0.20, 0.20, 0.20, 1.0],
+    "posicion"    : [2.0, 1.0, -6.0, 0.0]
+  },{
+    "brillo"      : 20,
+    "luzdifusa"   : [0.5, 0.8, 0.0, 1.0],
+    "luzambiente" : [0.50, 0.50, 0.50, 1.0],
+    "luzspecular": [0.20, 0.20, 0.20, 1.0],
+    "posicion"    : [2.0, 1.0, -6.0, 0.0]
+  }],
+  "camaras" : [
+    {
+    "ejex" : 30,
+    "ejey" : 10,
+    "ejez" : 10,
+    "centrox" : 0,
+    "centroy" : 0,
+    "centroz" : 0,
+    "upx" : 0,
+    "upy" : 1,
+    "upz" : 0
+    },{
+    "ejex" : 25,
+    "ejey" : 0,
+    "ejez" : 0,
+    "centrox" : 0,
+    "centroy" : 0,
+    "centroz" : 0,
+    "upx" : 1,
+    "upy" : 1,
+    "upz" : 1
+    },{
+    "ejex" : 0,
+    "ejey" : 35,
+    "ejez" : 25,
+    "centrox" : 0,
+    "centroy" : 0,
+    "centroz" : 0,
+    "upx" : 1,
+    "upy" : 0,
+    "upz" : 1
+    }],
+"materiales" : [{
+    "brillo"      : 100.0,
+    "luzdifusa"   : [0.75164, 0.60648, 0.22648, 1.0], 
+    "luzambiente" : [0.24725, 0.1995, 0.0745, 1.0],
+    "luzspecular": [0.628281, 0.555802, 0.366065, 1.0]
+},{
+    "brillo"      : 10.0,
+    "luzdifusa"   : [0.5,0.5,0.5,1.0],
+    "luzambiente" : [0.05,0.05,0.05,1.0],
+    "luzspecular": [0.7,0.7,0.7,1.0]
+},{
+    "brillo"      : 25.6,
+    "luzdifusa"   : [0.714, 0.4284, 0.18144, 1.0],
+    "luzambiente" : [0.2125, 0.1275, 0.054, 1.0],
+    "luzspecular": [0.393548, 0.271906, 0.166721, 1.0]
+},{
+    "brillo"      : 10.0,
+    "luzdifusa"   : [0.4,0.5,0.5,1.0],
+    "luzambiente" : [0.0,0.05,0.05,1.0],
+    "luzspecular": [0.04,0.7,0.7,1.0]
+},{
+    "brillo"      : 70.0,
+    "luzdifusa"   : [0.7, 0.0, 0.0, 0.0],
+    "luzambiente" : [0.7, 0.0, 0.0, 0.0],
+    "luzspecular": [0.7, 0.0, 0.0, 0.0]
+},{
+    "brillo"      : 12.8,
+    "luzdifusa"   : [0.7038, 0.27048, 0.0828, 1.0],
+    "luzambiente" : [0.19125, 0.0735, 0.0225, 1.0],
+    "luzspecular": [0.256777, 0.137622, 0.086014, 1.0]
+},{
+    "brillo"      : 51.2,
+    "luzdifusa"   : [0.5508, 0.2118, 0.066, 1.0],
+    "luzambiente" : [0.2295, 0.08825, 0.0275, 1.0],
+    "luzspecular": [0.580594, 0.223257, 0.0695701, 1.0]
+},{
+    "brillo"      : 9.84615,
+    "luzdifusa"   : [0.427451, 0.470588, 0.541176, 1.0],
+    "luzambiente" : [0.105882, 0.058824, 0.113725, 1.0],
+    "luzspecular": [0.333333, 0.333333, 0.521569, 1.0]
+},{
+    "brillo"      : 10.0,
+    "luzdifusa"   : [0.5,0.5,0.5,1.0],
+    "luzambiente" : [0.05,0.05,0.05,1.0],
+    "luzspecular": [0.7,0.7,0.7,1.0]
+}],
+"planetas" : [
+    {
+    "radio" : 0.0,
+    "wRotAstro" : 0.0,
+    "wRotProp" : 0.8,
+    "tamanio" : 0.5,
+    "nombre" : "Sol",
+    "l" : "n"
+    },{
+    "radio" : 110.0,
+    "wRotAstro" : 4.5,
+    "wRotProp" : 0.7,
+    "tamanio" : 0.1,
+    "nombre" : "Mercurio",
+    "l" : "n"
+    },{"radio" : 170,
+    "wRotAstro" : 4.0,
+    "wRotProp" : 0.4,
+    "tamanio" : 0.2,
+    "nombre" : "Venus",
+    "l" : "n"
+    },{"radio" : 230.0,
+    "wRotAstro" : 0.4,
+    "wRotProp" : 0.19,
+    "tamanio" : 0.3,
+    "nombre" : "Tierra",
+    "l" : "n"
+    },{"radio" : 300.0,
+    "wRotAstro" : 2.5,
+    "wRotProp" : 0.2,
+    "tamanio" : 0.25,
+    "nombre" : "Marte",
+    "l" : "n"
+    },{"radio" : 410.0,
+    "wRotAstro" : 2.0,
+    "wRotProp" : 0.3,
+    "tamanio" : 0.3,
+    "nombre" : "Jupiter",
+    "l" : "n"
+    },{"radio" : 510.0,
+    "wRotAstro" : 1.5,
+    "wRotProp" : 0.19,
+    "tamanio" : 0.3,
+    "nombre" : "Saturno",
+    "l" : "n"
+    },{"radio" : 610.0,
+    "wRotAstro" : 0.09,
+    "wRotProp" : 0.09,
+    "tamanio" : 0.3,
+    "nombre" : "Neptuno",
+    "l" : "n"
+    },{"radio" : 40.0,
+    "wRotAstro" : 0.45,
+    "wRotProp" : 0.55,
+    "tamanio" : 0.15,
+    "nombre" : "Luna Neptuno",
+    "l" : "l"
+    }],
+}
