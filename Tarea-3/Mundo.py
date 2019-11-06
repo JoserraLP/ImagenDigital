@@ -1,5 +1,6 @@
 import Modelo as m
 import Camera as c
+import Light as l
 
 from OpenGL.GL import *
 from OpenGL.GLUT import *
@@ -76,8 +77,11 @@ class Mundo:
 		}
 
 		# Un dato de ejemplo
-		self.camara = c.Camera(2.0, 2.0, 5.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
+		self.camara = c.Camera(2.0, 2.0, 5.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, self.aspect)
 		self.camara.startCam()
+
+		# Un dato de ejemplo
+		self.light = l.Light([1.0, 1.0, 1.0, 1.0], [0.50, 0.50, 0.50, 1.0], [0.20, 0.20, 0.20, 1.0], [5.0, 5.0, 6.0, 0.0])
 
 	def getIFondo(self):
 		return self.iFondo
@@ -140,21 +144,15 @@ class Mundo:
 		# Establecemos el color del Modelo.
 		glColor3f(self.colores[self.getIDibujo()][0], self.colores[self.getIDibujo()][1], self.colores[self.getIDibujo()][2])
 
-		# Pasar a una nueva clase esto de la luz
+		# Establecemos la luz
 
-		luzdifusa, luzambiente, luzspecular, posicion0 = [], [], [], []
-
-		self.sol.setVector(luzdifusa, 1.0, 1.0, 1.0, 1.0)
-		self.sol.setVector(luzambiente, 0.50, 0.50, 0.50, 1.0)
-		self.sol.setVector(luzspecular, 0.20, 0.20, 0.20, 1.0)
-		self.sol.setVector(posicion0, 5.0, 5.0, 6.0, 0.0)
-		glLightfv(GL_LIGHT0, GL_DIFFUSE, luzdifusa)
-		glLightfv(GL_LIGHT0, GL_AMBIENT, luzambiente)
-		glLightfv(GL_LIGHT0, GL_SPECULAR, luzspecular)
-		glLightfv(GL_LIGHT0, GL_POSITION, posicion0)
+		self.light.startLight()
 
 		glEnable(GL_LIGHTING)
 		glEnable(GL_LIGHT0)
+
+		# Establecemos el material
+		self.sol.material.startMaterial()
 
 		# Pintamos el modelo.
 		self.drawModel(self.sol, self.escalaGeneral)
@@ -189,8 +187,14 @@ class Mundo:
 	def keyPressed (self, key, x, y):
 		if (key == chr(27).encode()): # Tecla ESC
 			glutDestroyWindow(self.window)
-		elif (key == chr(32).encode()):
+		elif (key == chr(32).encode()): # Tecla espacio
 			self.camara.randomCam()
+		elif (key == chr(108).encode()): # Tecla l
+			self.light.randomLight()
+		elif (key == chr(112).encode()): # Tecla p
+			self.camara.randomPerspective()
+		elif (key == chr(109).encode()): #Tecla m
+			self.sol.chooseMaterial()
 	
 	def onMenu (self, option):
 		if option == self.opcionesMenu["FONDO_1"]:

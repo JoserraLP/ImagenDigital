@@ -23,6 +23,7 @@ class Modelo:
     def __init__(self, nCaras, nVertices):
         self._numCaras = nCaras
         self._numVertices = nVertices
+        self.material = m.Material([0.0215, 0.1745, 0.0215, 0.0], [0.07568, 0.61424, 0.07568, 0.0], [0.633, 0.727811, 0.633, 0.0], 0.6)
         
     def setVector(self, vector, v0, v1, v2, v3):
         vector.clear()
@@ -163,3 +164,6 @@ class Modelo:
             self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getZ()*scale_from_editor*zoom)                    
             
             glEnd()
+
+    def chooseMaterial(self):
+        self.material.randomMaterial()
