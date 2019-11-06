@@ -4,8 +4,7 @@ from OpenGL.GLU import *
 from OpenGL.GL import *
 
 class Camera:
-    axisX, axisY, axisZ, centerX, centerY, centerZ, upX, upY, upZ = 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
-
+    
     def __init__(self, axisX = 0.0, axisY = 0.0, axisZ = 0.0, centerX = 0.0, centerY = 0.0, centerZ = 0.0, upX = 0.0, upY = 0.0, upZ = 0.0):
         self.axisX = axisX
         self.axisY = axisY
@@ -27,6 +26,10 @@ class Camera:
         self.upX = random.uniform(0.0, 1.0)
         self.upY = random.uniform(0.0, 1.0)
         self.upZ = random.uniform(0.0, 1.0)
+
+    # TODO elegir Perspectiva
+    def selectPerspective(self):
+        pass
 
     def startCam(self):
         gluPerspective(30.0, 1.0, 1.0, 10.0)

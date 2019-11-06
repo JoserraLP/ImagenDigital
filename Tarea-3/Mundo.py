@@ -76,9 +76,8 @@ class Mundo:
 		}
 
 		# Un dato de ejemplo
-		# self.camara = c.Camera(1.0, 5.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
-		self.camara = c.Camera()
-		self.camara.randomCam()
+		self.camara = c.Camera(2.0, 2.0, 5.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
+		self.camara.startCam()
 
 	def getIFondo(self):
 		return self.iFondo
@@ -190,6 +189,8 @@ class Mundo:
 	def keyPressed (self, key, x, y):
 		if (key == chr(27).encode()): # Tecla ESC
 			glutDestroyWindow(self.window)
+		elif (key == chr(32).encode()):
+			self.camara.randomCam()
 	
 	def onMenu (self, option):
 		if option == self.opcionesMenu["FONDO_1"]:

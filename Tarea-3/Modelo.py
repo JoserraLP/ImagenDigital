@@ -1,5 +1,6 @@
 
 import re
+import Material as m
 
 from point_face import Point3D, Face
 from OpenGL.GL import *
@@ -18,9 +19,6 @@ class Modelo:
 
     #Lista de puntos 3D y Lista de caras
     ListaPuntos3D, ListaCaras = [], []
-
-    #Atributos del material
-    mat_ambient, mat_diffuse, mat_specular = [], [], []
 
     def __init__(self, nCaras, nVertices):
         self._numCaras = nCaras
@@ -165,5 +163,3 @@ class Modelo:
             self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getZ()*scale_from_editor*zoom)                    
             
             glEnd()
-
-   # def choose_material():
