@@ -13,7 +13,7 @@ class Light:
 	def randomLight(self):
 		self.luzdifusa = [1.0, 1.0, 1.0, 1.0]
 		self.luzambiente = [0.50, 0.50, 0.50, 1.0]
-		self.luzspecular = [ 0.20, 0.20, 0.20, 1.0]
+		self.luzspecular = [0.20, 0.20, 0.20, 1.0]
 		self.posicion0 = [random.uniform(0.0, 10.0), random.uniform(0.0, 10.0), random.uniform(0.0, 10.0), random.uniform(0.0, 10.0)]
 
 	def startLight(self):

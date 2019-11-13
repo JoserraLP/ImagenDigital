@@ -7,8 +7,8 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 
 class Main:
-
-	mundo = m.Mundo()
+	def __init__(self):
+		self.mundo = None
 
 	def display(self):
 		self.mundo.display()
@@ -24,7 +24,7 @@ class Main:
 
 	# Funcion que crea las distintas opciones que se pueden activar en los menus.
 	def creacionMenu(self):
-		menuFondo, menuDibujo, menuPrincipal, menuForma = 0,0,0,0
+		menuFondo, menuDibujo, menuForma, menuCamara, menuPrincipal = 0,0,0,0,0
 
 		menuFondo = glutCreateMenu(self.mundo.onMenu)
 		glutAddMenuEntry("Negro", self.mundo.opcionesMenu['FONDO_1'])
@@ -42,11 +42,18 @@ class Main:
 		glutAddMenuEntry("Flat", self.mundo.opcionesMenu['FORMA_3'])
 		glutAddMenuEntry("Smooth", self.mundo.opcionesMenu['FORMA_4'])
 
-		menuPrincipal = glutCreateMenu(self.mundo.onMenu)
+		menuCamara = glutCreateMenu(self.mundo.onMenu)
+		glutAddMenuEntry("Camara_1", self.mundo.opcionesMenu['CAMARA_1'])
+		glutAddMenuEntry("Camara_2", self.mundo.opcionesMenu['CAMARA_2'])
+		glutAddMenuEntry("Camara_3", self.mundo.opcionesMenu['CAMARA_3'])
 		
+		menuPrincipal = glutCreateMenu(self.mundo.onMenu)
+
 		glutAddSubMenu("Color de fondo", menuFondo)
 		glutAddSubMenu("Color del dibujo", menuDibujo)
 		glutAddSubMenu("Forma del dibujo", menuForma)
+		glutAddSubMenu("Camaras", menuCamara)
+		
 		# Carga el menú con el boton derecho.
 		glutAttachMenu(GLUT_RIGHT_BUTTON)
 
@@ -76,12 +83,12 @@ if __name__ == "__main__":
 
 	modelo_dict = jl.JsonLoader.load(sys.argv[1])
 	
-	if (len(modelo_dict) > 0):
-		exit(status=1, message="El fichero "+sys.argv[1]+"no ha sido cargado correctamente")
+	if (len(modelo_dict) < 0):
+		exit(status=1, message="El fichero "+sys.argv[1]+" no ha sido cargado correctamente")
 
-	mundo.loadModel(sys.argv[2])
+	main.mundo = m.Mundo(modelo_dict)
 
-	mundo = m.Mundo()
+	main.mundo.loadModel(sys.argv[2])
 
 	glutInit(sys.argv)
 	

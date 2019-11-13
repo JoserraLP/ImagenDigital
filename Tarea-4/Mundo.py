@@ -9,43 +9,12 @@ from OpenGL.GLU import *
 class Mundo:
 	"""Clase para representar Mundo"""
 
-	# Número de vistas diferentes.
-	numCamaras = 3
-
-	# Definimos los distintos colores que usaremos para visualizar nuestro Sistema Planetario.
-	# Se encuentra distribuido en RGB
-	colores = [(0.00, 0.00, 0.00),   # 0 - negro
-		(0.06, 0.25, 0.13), # 1 - verde oscuro
-		(0.10, 0.07, 0.33), # 2 - azul oscuro
-		(1.00, 1.00, 1.00), # 3 - blanco
-		(0.12, 0.50, 0.26), # 4 - verde claro
-		(0.20, 0.14, 0.66)] # 5 - azul claro 
-
-	width, height, window = 0, 0, 0 
-	aspect, angulo = 0.0, 0.0
-	sol = m.Modelo(0,0)
-	
-	# Tamaño de los ejes y del alejamiento de Z.
-	tamanio, z0 = 0, 0
-
-	# Factor para el tamaño del modelo.
-	escalaGeneral = 0.0
-
-	# Rotacion de los modelos.
-	alpha, beta = 0.0, 0.0
-
-	# Variables para la gestion del ratón.
-	xold, yold = 0, 0
-	zoom = 0.0
-
-
-	# Vistas del Sistema Planetario.
-	iFondo, iDibujo = 0, 0
-	iForma = "wired"
-
-	def __init__ (self):
-		self.width, self.height, self.angulo, self.windows = 800, 800, 0, 0
+	def __init__ (self, modelo_dict):
+		self.width, self.height, self.angulo, self.window = 800, 800, 0, 0
 		self.aspect = self.width/self.height
+
+		# Número de vistas diferentes.
+		self.numCamaras = 3
 
 		# Factor para el tamaño del modelo.
 		self.escalaGeneral = 0.005
@@ -60,6 +29,9 @@ class Mundo:
 		self.iDibujo, self.iFondo = 3, 0
 		self.iForma = "wired"
 
+		# Tamaño de los ejes y del alejamiento de Z.
+		self.tamanio, self.z0 = 0, 0
+
 		# Distintas opciones del menu.
 		self.opcionesMenu = {
 			"FONDO_1":1,
@@ -73,15 +45,56 @@ class Mundo:
 			"FORMA_1":9,
 			"FORMA_2":10,
 			"FORMA_3":11,
-			"FORMA_4":12
+			"FORMA_4":12,
+			"CAMARA_1":13,
+			"CAMARA_2":14,
+			"CAMARA_3":15,
+			"FOCO_1":16,
+			"FOCO_2":17,
+			"FOCO_3":18,
+			"FOCO_4":19,
+			"FOCO_5":20,
+			"FOCO_6":21,
+			"FOCO_7":22,
+			"MATERIAL_1":23,
+			"MATERIAL_2":24,
+			"MATERIAL_3":25,
+			"MATERIAL_4":26,
+			"MATERIAL_5":27,
+			"MATERIAL_6":28,
+			"MATERIAL_7":29,
+			"MATERIAL_8":30,
+			"MATERIAL_9":31
 		}
 
-		# Un dato de ejemplo
-		self.camara = c.Camera(2.0, 2.0, 5.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, self.aspect)
-		self.camara.startCam()
+		# Definimos los distintos colores que usaremos para visualizar nuestro Sistema Planetario.
+		# Se encuentra distribuido en RGB
+		self.colores = [(0.00, 0.00, 0.00),   # 0 - negro
+			(0.06, 0.25, 0.13), # 1 - verde oscuro
+			(0.10, 0.07, 0.33), # 2 - azul oscuro
+			(1.00, 1.00, 1.00), # 3 - blanco
+			(0.12, 0.50, 0.26), # 4 - verde claro
+			(0.20, 0.14, 0.66)] # 5 - azul claro 
 
-		# Un dato de ejemplo
-		self.light = l.Light([1.0, 1.0, 1.0, 1.0], [0.50, 0.50, 0.50, 1.0], [0.20, 0.20, 0.20, 1.0], [5.0, 5.0, 6.0, 0.0])
+		# Variables actuales
+
+		self.act_cam = 0
+
+		# Cargamos todos los datos y los almacenamos en distintos arrays
+
+		self.lights = [l.Light(light['luzdifusa'], light['luzambiente'], light['luzspecular'], light['posicion']) for light in modelo_dict['focos']] 
+
+		self.camaras = [c.Camera(cam['ejex'], cam['ejey'], cam['ejez'], cam['centrox'], cam['centroy'], cam['centroz'], 
+		cam['upx'], cam['upy'], cam['upz']) for cam in modelo_dict['camaras']]
+		
+		self.camaras[0].startCam()
+
+		self.materials = [[material['luzambiente'], material['luzdifusa'], material['luzspecular'], material['brillo']] for material in modelo_dict['materiales']]
+
+		self.astros = [m.Modelo(None, model['radio'], model['wRotAstro'], model['wRotProp'], model['tamanio'], model['nombre'], model['l']) for model in modelo_dict['planetas']]
+
+		for i in range(len(self.materials)):
+			self.astros[i].material = self.materials[i]
 
 	def getIFondo(self):
 		return self.iFondo
@@ -136,7 +149,7 @@ class Mundo:
 		glMatrixMode(GL_MODELVIEW)
 		glLoadIdentity()
 
-		self.camara.startCam()
+		self.camaras[self.act_cam].startCam()
 
 		glRotatef(self.alpha, 1.0, 0.0, 0.0)
 		glRotatef(self.beta, 0.0, 1.0, 0.0)
@@ -146,16 +159,15 @@ class Mundo:
 
 		# Establecemos la luz
 
-		self.light.startLight()
+		self.lights[0].startLight()
 
 		glEnable(GL_LIGHTING)
 		glEnable(GL_LIGHT0)
 
-		# Establecemos el material
-		self.sol.material.startMaterial()
-
-		# Pintamos el modelo.
-		self.drawModel(self.sol, self.escalaGeneral)
+		for model in self.astros:
+			glTranslatef(model.radio*self.escalaGeneral, 0.0, 0.0)
+			# Pintamos el modelo
+			self.drawModel(model, self.escalaGeneral)
 
 		glFlush() 
 		glutSwapBuffers()
@@ -187,14 +199,15 @@ class Mundo:
 	def keyPressed (self, key, x, y):
 		if (key == chr(27).encode()): # Tecla ESC
 			glutDestroyWindow(self.window)
+			exit()
 		elif (key == chr(32).encode()): # Tecla espacio
-			self.camara.randomCam()
+			self.camaras[0].randomCam()
 		elif (key == chr(108).encode()): # Tecla l
-			self.light.randomLight()
+			self.lights[0].randomLight()
 		elif (key == chr(112).encode()): # Tecla p
-			self.camara.randomPerspective()
+			self.camaras[0].randomPerspective()
 		elif (key == chr(109).encode()): #Tecla m
-			self.sol.chooseMaterial()
+			self.astros[0].chooseMaterial()
 	
 	def onMenu (self, option):
 		if option == self.opcionesMenu["FONDO_1"]:
@@ -216,15 +229,23 @@ class Mundo:
 		elif option == self.opcionesMenu["FORMA_3"]:
 			self.iForma = "flat"
 		elif option == self.opcionesMenu["FORMA_4"]:
-	  		self.iForma = "smooth"
+			self.iForma = "smooth"
+		elif option == self.opcionesMenu["CAMARA_1"]:
+			self.act_cam = 0
+		elif option == self.opcionesMenu["CAMARA_2"]:
+			self.act_cam = 1
+		elif option == self.opcionesMenu["CAMARA_3"]:
+			self.act_cam = 2
+
 		glutPostRedisplay()
 		return option
 
 	def loadModel (self, nombre):
-		_, vertices, faces = self.sol.load(nombre)
-		self.sol.numCaras = len(faces)
-		self.sol.numVertices = len(vertices)
-		self.sol.ListaCaras = faces
-		self.sol.ListaPuntos3D = vertices
+		for model in self.astros:
+			_, vertices, faces = model.load(nombre)
+			model.numCaras = len(faces)
+			model.numVertices = len(vertices)
+			model.ListaCaras = faces
+			model.ListaPuntos3D = vertices
 		
 

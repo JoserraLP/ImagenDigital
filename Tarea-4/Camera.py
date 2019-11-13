@@ -5,20 +5,20 @@ from OpenGL.GL import *
 
 class Camera:
     
-    def __init__(self, axisX = 0.0, axisY = 0.0, axisZ = 0.0, centerX = 0.0, centerY = 0.0, centerZ = 0.0, upX = 0.0, upY = 0.0, upZ = 0.0, aspect = 1.0):
-        self.axisX = axisX
-        self.axisY = axisY
-        self.axisZ = axisZ
-        self.centerX = centerX
-        self.centerY = centerY
-        self.centerZ = centerZ
-        self.upX = upX
-        self.upY = upY
-        self.upZ = upZ
+    def __init__(self, axisX = 0.0, axisY = 0.0, axisZ = 0.0, centerX = 0.0, centerY = 0.0, centerZ = 0.0, upX = 0, upY = 0, upZ = 0, aspect = 1.0):
+        self.axisX = float(axisX)
+        self.axisY = float(axisY)
+        self.axisZ = float(axisZ)
+        self.centerX = float(centerX)
+        self.centerY = float(centerY)
+        self.centerZ = float(centerZ)
+        self.upX = float(upX)
+        self.upY = float(upY)
+        self.upZ = float(upZ)
         self.fovy = 30.0
         self.aspect = aspect
         self.zNear = 1.0
-        self.zFar = 10.0
+        self.zFar = 100.0
 
     def randomCam(self):
         self.axisX = random.uniform(0.0, 5.0)
@@ -41,7 +41,6 @@ class Camera:
         self.fovy = random.uniform(20.0, 50.0)
         self.zNear = random.uniform(0.0, 5.0)
         self.zFar = random.uniform(5.0, 15.0)
-
 
     def startCam(self):
         gluPerspective(self.fovy, self.aspect, self.zNear, self.zFar)

@@ -9,21 +9,20 @@ from OpenGL.GLU import *
 
 
 class Modelo:
-    alpha, beta, _numCaras, _numVertices = 0,0,0,0
 
-    """
-    # Planetas JSON
-    radio, wRotAstro, wRotProp, tamanio = 0.0, 0.0, 0.0, 0.0 
-    nombre, l = "", ""
-    """
-
-    #Lista de puntos 3D y Lista de caras
-    ListaPuntos3D, ListaCaras = [], []
-
-    def __init__(self, nCaras, nVertices):
-        self._numCaras = nCaras
-        self._numVertices = nVertices
-        self.material = m.Material([0.0215, 0.1745, 0.0215, 0.0], [0.07568, 0.61424, 0.07568, 0.0], [0.633, 0.727811, 0.633, 0.0], 0.6)
+    def __init__(self, material, radio = 0, wRotAstro = 0, wRotProp = 0 , tamanio = 0, nombre = ' ', l = ' '):
+        self._numCaras = 0
+        self._numVertices = 0
+        self.alpha, self.beta = 0,0
+        self.material = m.Material(material)
+        self.radio = radio
+        self.wRotAstro = wRotAstro
+        self.wRotProp = wRotProp
+        self.tamanio = tamanio
+        self.nombre = nombre
+        self.l = l
+        self.ListaCaras = []
+        self.ListaPuntos3D = []
         
     def setVector(self, vector, v0, v1, v2, v3):
         vector.clear()
@@ -39,6 +38,14 @@ class Modelo:
     @numCaras.setter
     def numCaras(self, value):
         self._numCaras = value
+
+    @property
+    def material(self):
+        return self.material
+
+    @material.setter
+    def material(self, value):
+        self.material = m.Material(value)
 
     @property
     def numVertices(self):
@@ -119,6 +126,7 @@ class Modelo:
 
     def Draw_Model(self, scale_from_editor, zoom, iForma):
         # print("Caras: ", self._numCaras)
+        zoom *= self.tamanio
         smooth = False
         for FaceNumber in range(self._numCaras):
             if (iForma == "solid"):
@@ -162,7 +170,9 @@ class Modelo:
             glVertex3f(self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getX()*scale_from_editor*zoom, 
             self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getY()*scale_from_editor*zoom,
             self.ListaPuntos3D[self.ListaCaras[FaceNumber].getA()].getZ()*scale_from_editor*zoom)                    
-            
+
+            self.material.startMaterial()
+
             glEnd()
 
     def chooseMaterial(self):
