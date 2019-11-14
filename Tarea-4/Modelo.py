@@ -40,14 +40,6 @@ class Modelo:
         self._numCaras = value
 
     @property
-    def material(self):
-        return self.material
-
-    @material.setter
-    def material(self, value):
-        self.material = m.Material(value)
-
-    @property
     def numVertices(self):
         return self._numVertices
 

@@ -5,7 +5,7 @@ from OpenGL.GL import *
 class Material:
 
     def __init__(self, material):
-        self.mat_ambient, self.mat_diffuse, self.mat_specular, self.brillo = material
+        self.mat_ambient, self.mat_diffuse, self.mat_specular, self.brillo = material[0], material[1], material[2], material[3]
 
     def randomMaterial(self):
         self.mat_ambient = [random.uniform(0.0, 1.0), random.uniform(0.0, 1.0), random.uniform(0.0, 1.0), 0.0]

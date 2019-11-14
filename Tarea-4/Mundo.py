@@ -91,10 +91,12 @@ class Mundo:
 
 		self.materials = [[material['luzambiente'], material['luzdifusa'], material['luzspecular'], material['brillo']] for material in modelo_dict['materiales']]
 
-		self.astros = [m.Modelo(None, model['radio'], model['wRotAstro'], model['wRotProp'], model['tamanio'], model['nombre'], model['l']) for model in modelo_dict['planetas']]
 
-		for i in range(len(self.materials)):
-			self.astros[i].material = self.materials[i]
+		for mat in self.materials:
+			self.astros = [m.Modelo(mat, model['radio'], model['wRotAstro'], model['wRotProp'], model['tamanio'], model['nombre'], model['l']) for model in modelo_dict['planetas']]
+
+		""" for i in range(len(self.materials)):
+			self.astros[i].material = self.materials[i] """
 
 	def getIFondo(self):
 		return self.iFondo
@@ -159,8 +161,8 @@ class Mundo:
 
 		# Establecemos la luz
 
-		self.lights[0].startLight()
-
+		self.lights[1].startLight()
+		print(self.lights[1].luzdifusa)
 		glEnable(GL_LIGHTING)
 		glEnable(GL_LIGHT0)
 
