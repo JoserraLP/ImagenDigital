@@ -18,12 +18,12 @@ class Camera:
         self.fovy = 30.0
         self.aspect = aspect
         self.zNear = 1.0
-        self.zFar = 100.0
+        self.zFar = 500.0
 
     def randomCam(self):
-        self.axisX = random.uniform(0.0, 5.0)
-        self.axisY = random.uniform(0.0, 5.0)
-        self.axisZ = random.uniform(0.0, 5.0)
+        self.axisX:random.uniform(0.0, 40.0)
+        self.axisY = random.uniform(0.0, 40.0)
+        self.axisZ = random.uniform(0.0, 40.0)
         self.centerX = random.uniform(0.0, 0.0)
         self.centerY = random.uniform(0.0, 0.0)
         self.centerZ = random.uniform(0.0, 0.0)
@@ -42,6 +42,7 @@ class Camera:
         self.zNear = random.uniform(0.0, 5.0)
         self.zFar = random.uniform(5.0, 15.0)
 
-    def startCam(self):
+    # Se multiplica por zoom para que este bien hecho
+    def startCam(self, zoom):
         gluPerspective(self.fovy, self.aspect, self.zNear, self.zFar)
-        gluLookAt(self.axisX, self.axisY, self.axisZ, self.centerX, self.centerY, self.centerZ, self.upX, self.upY, self.upZ)
+        gluLookAt(self.axisX*zoom, self.axisY*zoom, self.axisZ*zoom, self.centerX, self.centerY, self.centerZ, self.upX, self.upY, self.upZ)

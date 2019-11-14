@@ -17,7 +17,7 @@ class Mundo:
 		self.numCamaras = 3
 
 		# Factor para el tamaño del modelo.
-		self.escalaGeneral = 0.005
+		self.escalaGeneral = 0.011
 
 		# Rotacion de los modelos.
 		self.alpha, self.beta = 0, 0
@@ -49,22 +49,7 @@ class Mundo:
 			"CAMARA_1":13,
 			"CAMARA_2":14,
 			"CAMARA_3":15,
-			"FOCO_1":16,
-			"FOCO_2":17,
-			"FOCO_3":18,
-			"FOCO_4":19,
-			"FOCO_5":20,
-			"FOCO_6":21,
-			"FOCO_7":22,
-			"MATERIAL_1":23,
-			"MATERIAL_2":24,
-			"MATERIAL_3":25,
-			"MATERIAL_4":26,
-			"MATERIAL_5":27,
-			"MATERIAL_6":28,
-			"MATERIAL_7":29,
-			"MATERIAL_8":30,
-			"MATERIAL_9":31
+			"CAMARA_4":16
 		}
 
 		# Definimos los distintos colores que usaremos para visualizar nuestro Sistema Planetario.
@@ -84,19 +69,25 @@ class Mundo:
 
 		self.lights = [l.Light(light['luzdifusa'], light['luzambiente'], light['luzspecular'], light['posicion']) for light in modelo_dict['focos']] 
 
+		# Almacenar el número de la luz
+		for i in range(len(self.lights)):
+			self.lights[i].setNum(i)
+
 		self.camaras = [c.Camera(cam['ejex'], cam['ejey'], cam['ejez'], cam['centrox'], cam['centroy'], cam['centroz'], 
 		cam['upx'], cam['upy'], cam['upz']) for cam in modelo_dict['camaras']]
 		
-		self.camaras[0].startCam()
+		# Añadimos la opción de una camara aleatoria
+		self.camaras.append(c.Camera(10,10,10,0,0,0,1,0,1))
+		
+		self.camaras[0].startCam(self.zoom)
 
 		self.materials = [[material['luzambiente'], material['luzdifusa'], material['luzspecular'], material['brillo']] for material in modelo_dict['materiales']]
 
-
-		for mat in self.materials:
-			self.astros = [m.Modelo(mat, model['radio'], model['wRotAstro'], model['wRotProp'], model['tamanio'], model['nombre'], model['l']) for model in modelo_dict['planetas']]
-
-		""" for i in range(len(self.materials)):
-			self.astros[i].material = self.materials[i] """
+		self.astros = []
+		i=0
+		for model in modelo_dict["planetas"]:
+			self.astros.append(m.Modelo(self.materials[i], model['radio'], model['wRotAstro'], model['wRotProp'], model['tamanio'], model['nombre'], model['l']))
+			i+=1
 
 	def getIFondo(self):
 		return self.iFondo
@@ -138,7 +129,7 @@ class Mundo:
 		glEnable(GL_LIGHTING)
 
 	def drawModel(self, modelo, escala):
-		modelo.Draw_Model(escala,self.zoom,self.iForma)
+		modelo.Draw_Model(escala,self.iForma)
 
 	def display(self):
 		glClearDepth(1.0)
@@ -151,7 +142,7 @@ class Mundo:
 		glMatrixMode(GL_MODELVIEW)
 		glLoadIdentity()
 
-		self.camaras[self.act_cam].startCam()
+		self.camaras[self.act_cam].startCam(self.zoom)
 
 		glRotatef(self.alpha, 1.0, 0.0, 0.0)
 		glRotatef(self.beta, 0.0, 1.0, 0.0)
@@ -160,16 +151,29 @@ class Mundo:
 		glColor3f(self.colores[self.getIDibujo()][0], self.colores[self.getIDibujo()][1], self.colores[self.getIDibujo()][2])
 
 		# Establecemos la luz
-
-		self.lights[1].startLight()
-		print(self.lights[1].luzdifusa)
+		for light in self.lights:
+			light.startLight()
+		
 		glEnable(GL_LIGHTING)
-		glEnable(GL_LIGHT0)
+		for light in self.lights:
+			self.checkLight(light)
+
+		planetas = [planeta for planeta in self.astros if planeta.l == 'n']
+		for planeta in planetas:
+			print(planeta.nombre)
+		print("...................")
+		lunas = [luna for luna in self.astros if luna.l == 'l']
+		for luna in lunas:
+			print(luna.nombre)
 
 		for model in self.astros:
+			glPushMatrix()
 			glTranslatef(model.radio*self.escalaGeneral, 0.0, 0.0)
 			# Pintamos el modelo
 			self.drawModel(model, self.escalaGeneral)
+			glPopMatrix()
+
+		# Radio de la luna tiene que se relativo al planeta
 
 		glFlush() 
 		glutSwapBuffers()
@@ -198,19 +202,40 @@ class Mundo:
 		self.yold = y
 		glutPostRedisplay()
 
+	def checkLight(self, light):
+		if(light.activa is True):
+			light.enableLight()
+		else:
+			light.disableLight()
+
 	def keyPressed (self, key, x, y):
 		if (key == chr(27).encode()): # Tecla ESC
 			glutDestroyWindow(self.window)
 			exit()
 		elif (key == chr(32).encode()): # Tecla espacio
-			self.camaras[0].randomCam()
-		elif (key == chr(108).encode()): # Tecla l
-			self.lights[0].randomLight()
-		elif (key == chr(112).encode()): # Tecla p
-			self.camaras[0].randomPerspective()
-		elif (key == chr(109).encode()): #Tecla m
-			self.astros[0].chooseMaterial()
-	
+			self.camaras[3].randomCam()
+		elif (key == chr(49).encode()): # Tecla 1
+			self.lights[0].changeStatus()
+			self.checkLight(self.lights[0])
+		elif (key == chr(50).encode()): # Tecla 2
+			self.lights[1].changeStatus()
+			self.checkLight(self.lights[1])
+		elif (key == chr(51).encode()): # Tecla 3
+			self.lights[2].changeStatus()
+			self.checkLight(self.lights[2])
+		elif (key == chr(52).encode()): # Tecla 4
+			self.lights[3].changeStatus()
+			self.checkLight(self.lights[3])
+		elif (key == chr(53).encode()): # Tecla 5
+			self.lights[4].changeStatus()
+			self.checkLight(self.lights[4])
+		elif (key == chr(54).encode()): # Tecla 6
+			self.lights[5].changeStatus()
+			self.checkLight(self.lights[5])
+		elif (key == chr(55).encode()): # Tecla 7
+			self.lights[6].changeStatus()
+			self.checkLight(self.lights[6])
+
 	def onMenu (self, option):
 		if option == self.opcionesMenu["FONDO_1"]:
 			self.iFondo = 0
@@ -238,6 +263,8 @@ class Mundo:
 			self.act_cam = 1
 		elif option == self.opcionesMenu["CAMARA_3"]:
 			self.act_cam = 2
+		elif option == self.opcionesMenu["CAMARA_4"]:
+			self.act_cam = 3
 
 		glutPostRedisplay()
 		return option

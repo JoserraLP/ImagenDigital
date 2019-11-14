@@ -43,9 +43,10 @@ class Main:
 		glutAddMenuEntry("Smooth", self.mundo.opcionesMenu['FORMA_4'])
 
 		menuCamara = glutCreateMenu(self.mundo.onMenu)
-		glutAddMenuEntry("Camara_1", self.mundo.opcionesMenu['CAMARA_1'])
-		glutAddMenuEntry("Camara_2", self.mundo.opcionesMenu['CAMARA_2'])
-		glutAddMenuEntry("Camara_3", self.mundo.opcionesMenu['CAMARA_3'])
+		glutAddMenuEntry("Camara 1", self.mundo.opcionesMenu['CAMARA_1'])
+		glutAddMenuEntry("Camara 2", self.mundo.opcionesMenu['CAMARA_2'])
+		glutAddMenuEntry("Camara 3", self.mundo.opcionesMenu['CAMARA_3'])
+		glutAddMenuEntry("Camara aleatoria", self.mundo.opcionesMenu['CAMARA_4'])
 		
 		menuPrincipal = glutCreateMenu(self.mundo.onMenu)
 
