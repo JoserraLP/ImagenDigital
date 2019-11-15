@@ -1,6 +1,7 @@
 import Modelo as m
 import Camera as c
 import Light as l
+import time as t
 
 from OpenGL.GL import *
 from OpenGL.GLUT import *
@@ -84,10 +85,19 @@ class Mundo:
 		self.materials = [[material['luzambiente'], material['luzdifusa'], material['luzspecular'], material['brillo']] for material in modelo_dict['materiales']]
 
 		self.astros = []
-		i=0
+		
+		i = 0
+		numLunas = 0
 		for model in modelo_dict["planetas"]:
-			self.astros.append(m.Modelo(self.materials[i], model['radio'], model['wRotAstro'], model['wRotProp'], model['tamanio'], model['nombre'], model['l']))
+			if (model['l'] == 'n'):
+				numLunas = 0
+				self.astros.append(m.Modelo(self.materials[i], model['radio'], model['wRotAstro'], model['wRotProp'], model['tamanio'], model['nombre'], model['l']))
+			elif (model['l'] == 'l'):
+				numLunas += 1
+				self.astros[i-numLunas].lunas.append(m.Modelo(self.materials[i], model['radio'], model['wRotAstro'], model['wRotProp'], model['tamanio'], model['nombre'], model['l']))
 			i+=1
+
+		self.startTime = t.time()
 
 	def getIFondo(self):
 		return self.iFondo
@@ -139,10 +149,10 @@ class Mundo:
 		glMatrixMode(GL_PROJECTION)
 		glLoadIdentity()
 
+		self.camaras[self.act_cam].startCam(self.zoom)
+
 		glMatrixMode(GL_MODELVIEW)
 		glLoadIdentity()
-
-		self.camaras[self.act_cam].startCam(self.zoom)
 
 		glRotatef(self.alpha, 1.0, 0.0, 0.0)
 		glRotatef(self.beta, 0.0, 1.0, 0.0)
@@ -157,23 +167,52 @@ class Mundo:
 		glEnable(GL_LIGHTING)
 		for light in self.lights:
 			self.checkLight(light)
-
-		planetas = [planeta for planeta in self.astros if planeta.l == 'n']
-		for planeta in planetas:
-			print(planeta.nombre)
-		print("...................")
-		lunas = [luna for luna in self.astros if luna.l == 'l']
-		for luna in lunas:
-			print(luna.nombre)
-
-		for model in self.astros:
+		
+		for planeta in self.astros:
+			# Tiempo para que se muevan
+			time_act = t.time() - self.startTime
 			glPushMatrix()
-			glTranslatef(model.radio*self.escalaGeneral, 0.0, 0.0)
+
+			# Rotacion sobre el Sol
+			glRotate(planeta.wRotAstro*time_act*4, 0.0, 1.0, 0.0)
+
+			glTranslatef(planeta.radio*self.escalaGeneral, 0.0, 0.0)
+
+			# Rotacion sobre si mismo
+			glRotate(planeta.wRotProp*time_act*4, 0.0, 1.0, 0.0)
+
 			# Pintamos el modelo
-			self.drawModel(model, self.escalaGeneral)
+			self.drawModel(planeta, self.escalaGeneral)
+			if (len(planeta.lunas) > 0):
+				for luna in planeta.lunas:
+					# 90º porque estan en vertical por defecto
+					glRotate(90.0, 1.0, 0.0, 0.0)
+
+					# Dibujar orbita
+					glutWireTorus(0.0, luna.radio*self.escalaGeneral, 100, 100)
+
+					# Rotacion sobre el planeta que es satelite
+					glRotate(luna.wRotAstro*time_act*4, 0.0, 0.0, -1.0)
+
+					glTranslatef(luna.radio*self.escalaGeneral, 0.0, 0.0)
+
+					# Rotacion sobre si mismo
+					glRotate(luna.wRotProp*time_act*4, 0.0, 1.0, 0.0)
+					
+					# Pintamos el modelo
+					self.drawModel(luna, self.escalaGeneral)
 			glPopMatrix()
 
-		# Radio de la luna tiene que se relativo al planeta
+			if (planeta.nombre == 'Sol'):
+				for i in self.astros:
+					# 90º porque estan en vertical por defecto
+					glRotate(90.0, 1.0, 0.0, 0.0)
+
+					# Dibujar orbita
+					glutWireTorus(0.0, i.radio*self.escalaGeneral, 100, 100)
+
+					# Devolvemos al estado inicial
+					glRotate(90.0, -1.0, 0.0, 0.0)
 
 		glFlush() 
 		glutSwapBuffers()
@@ -270,11 +309,18 @@ class Mundo:
 		return option
 
 	def loadModel (self, nombre):
-		for model in self.astros:
-			_, vertices, faces = model.load(nombre)
-			model.numCaras = len(faces)
-			model.numVertices = len(vertices)
-			model.ListaCaras = faces
-			model.ListaPuntos3D = vertices
+		for planeta in self.astros:
+			_, vertices, faces = planeta.load(nombre)
+			planeta.numCaras = len(faces)
+			planeta.numVertices = len(vertices)
+			planeta.ListaCaras = faces
+			planeta.ListaPuntos3D = vertices
+			if (len(planeta.lunas) > 0):
+				for luna in planeta.lunas:
+					_, vertices, faces = luna.load(nombre)
+					luna.numCaras = len(faces)
+					luna.numVertices = len(vertices)
+					luna.ListaCaras = faces
+					luna.ListaPuntos3D = vertices
 		
 
