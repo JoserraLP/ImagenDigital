@@ -33,6 +33,8 @@ class Mundo:
 		# Tamaño de los ejes y del alejamiento de Z.
 		self.tamanio, self.z0 = 0, 0
 
+		self.texture = self.ReadTexture("fondo.jpg")
+
 		# Distintas opciones del menu.
 		self.opcionesMenu = {
 			"FONDO_1":1,
@@ -67,7 +69,6 @@ class Mundo:
 		self.act_cam = 0
 
 		# Cargamos todos los datos y los almacenamos en distintos arrays
-
 		self.lights = [l.Light(light['luzdifusa'], light['luzambiente'], light['luzspecular'], light['posicion']) for light in modelo_dict['focos']] 
 
 		# Almacenar el número de la luz
@@ -119,55 +120,13 @@ class Mundo:
 			image = Image.open(filename)
 		except IOError as ex:
 			print('IOError: failed to open texture file')
-			message = template.format(type(ex).__name__, ex.args)
-			print(message)
 			return -1
 		print('opened file: size=', image.size, 'format=', image.format)
 		imageData = np.array(list(image.getdata()), np.uint8)
-		img_witdh = image.size[0]
-		img_height = image.size[1]
-		textureID = glGenTextures(1)
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 4)
-		glBindTexture(GL_TEXTURE_2D, textureID)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0)
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.width, self.height,
-			0, GL_RGB, GL_UNSIGNED_BYTE, imageData)
-
+		
 		image.close()
-		return textureID, img_witdh, img_height
+		return imageData
 
-	def read_texture(self):
-		img = Image.open('fondo.jpg') # .jpg, .bmp, etc. also work
-		img_data = np.array(list(img.getdata()), np.int8)
-		texture = glGenTextures(1)
-		glPixelStorei(GL_UNPACK_ALIGNMENT,1)
-		glBindTexture(GL_TEXTURE_2D, texture)
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.width, self.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img_data)
-
-
-	def drawBackground(self):
-		glEnable(GL_TEXTURE_2D)
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-		
-		self.ReadTexture("fondo.jpg")	
-		
-		glBegin( GL_QUADS )
-		glTexCoord2f(0,0) 
-		glVertex2f(-1,-1)
-		glTexCoord2f(1,0) 
-		glVertex2f( 1,-1)
-		glTexCoord2f(1,1) 
-		glVertex2f( 1, 1)
-		glTexCoord2f(0,1)
-		glVertex2f(-1, 1)
-		glEnd()
-		
-		glDisable(GL_TEXTURE_2D)
 
 	def drawAxis(self):
 	
@@ -203,7 +162,7 @@ class Mundo:
 		glClearDepth(1.0)
 		glClearColor(self.colores[self.getIFondo()][0], self.colores[self.getIFondo()][1], self.colores[self.getIFondo()][2], 1.0)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-		self.drawBackground()
+		#self.drawBackground()
 		glLoadIdentity()
 		
 
@@ -217,6 +176,9 @@ class Mundo:
 		glLoadIdentity()
 		glRotatef(self.alpha, 1.0, 0.0, 0.0)
 		glRotatef(self.beta, 0.0, 1.0, 0.0)
+		glDisable(GL_DEPTH_TEST)
+		glDrawPixels(self.width, self.height, GL_RGB, GL_UNSIGNED_BYTE, self.texture)
+		glEnable(GL_DEPTH_TEST)
 		# Establecemos el color del Modelo.
 		glColor3f(self.colores[self.getIDibujo()][0], self.colores[self.getIDibujo()][1], self.colores[self.getIDibujo()][2])
 

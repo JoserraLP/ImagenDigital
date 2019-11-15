@@ -3,7 +3,6 @@ import sys
 import json_loader as jl
 
 import numpy as np
-from PIL import Image
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
@@ -93,12 +92,10 @@ if __name__ == "__main__":
 	main.mundo = m.Mundo(modelo_dict)
 
 	main.mundo.loadModel(sys.argv[2])
-
 	glutInit(sys.argv)
 	
 	# Declaraciones Globales
 	main.InitGL()
-
 	# Gestion de los botones del raton
 	glutMouseFunc(main.onMouse)
 	# Gestion de los movimientos del raton	
