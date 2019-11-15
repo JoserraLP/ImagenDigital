@@ -2,6 +2,8 @@ import Mundo as m
 import sys
 import json_loader as jl
 
+import numpy as np
+from PIL import Image
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
@@ -18,6 +20,8 @@ class Main:
 
 	def onMotion(self, x, y):
 		self.mundo.onMotion(x,y)
+
+	
 
 	def onMouse(self, button, state, x, y):
 		self.mundo.onMouse(button,state,x,y)
@@ -77,7 +81,6 @@ class Main:
 		glEnable(GL_DEPTH_TEST)
 		glDepthMask(GL_TRUE)
 		glDepthFunc(GL_LESS)
-
 
 if __name__ == "__main__":
 	main = Main()
