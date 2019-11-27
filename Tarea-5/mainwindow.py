@@ -45,7 +45,7 @@ class MainWindow ():
             
             self.crop_img = self.original_img[y:y+h, x:x+w]
             self.resized_crop_img = cv2.resize(self.crop_img, (304, 130), cv2.INTER_CUBIC)
-            
+
             cropped_img = QtGui.QImage(self.resized_crop_img, 304, 130, QtGui.QImage.Format_RGB888)
             pixmap = QtGui.QPixmap()
             pixmap.convertFromImage(cropped_img.rgbSwapped())
@@ -56,17 +56,36 @@ class MainWindow ():
             if (i == 2):
 	            self.MainWindow.viewer_counter3.setPixmap(pixmap)
         
+        #self.match_template()
 
 
     def getFile(self):
         self.fname, _ = QFileDialog.getOpenFileName(self.MainWindow, 'Open file', './',"Image files (*.jpg *.gif)")
         self.original_img = cv2.imread(self.fname, cv2.IMREAD_COLOR)
-        # Cambiada de tamanio
+        
+        self.match_template()
+
+         # Cambiada de tamanio
         self.resized_img = cv2.resize(self.original_img, (720, 540), cv2.INTER_CUBIC)
 
         self.resized_img = self.geo.find_quadrilaterals(self.resized_img)
-        
+
         image = QtGui.QImage(self.resized_img, 720, 540, QtGui.QImage.Format_RGB888)
         pixmap = QtGui.QPixmap()
         pixmap.convertFromImage(image.rgbSwapped())
         self.MainWindow.viewer_original.setPixmap(pixmap)
+
+    def match_template(self):
+        
+        self.gray_original_img = cv2.cvtColor(self.original_img, cv2.COLOR_BGR2GRAY)
+
+        templates = [cv2.imread('./templates/{}.png'.format(i),0)for i in range (10)]
+
+        for template in templates:
+            w, h = template.shape[::-1]
+
+            res = cv2.matchTemplate(self.gray_original_img,template,cv2.TM_CCOEFF_NORMED)
+            threshold = 0.80
+            loc = np.where(res >= threshold)
+            for pt in zip(*loc[::-1]):
+                cv2.rectangle(self.original_img, pt, (pt[0] + w, pt[1] + h), (0,0,255), 1)
