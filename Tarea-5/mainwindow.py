@@ -20,7 +20,6 @@ class MainWindow ():
     ]
 
     def __init__(self):
-        self.match_t = mt.match_template()
         #Cargar la interfaz gráfica "mainwindow.ui" en MainWindow
         self.MainWindow = uic.loadUi("mainwindow.ui")
         #Poner el titulo a la ventana MainWindow
@@ -28,18 +27,48 @@ class MainWindow ():
         self.geo = geometrics.Geometrics()
         self.MainWindow.Load_button.clicked.connect(self.getFile)
         self.MainWindow.Clip_button.clicked.connect(self.clipping)
-        self.MainWindow.OCR_button.clicked.connect(self.compute)
-       
+        self.MainWindow.OCR_button.clicked.connect(self.compute)       
     
     def compute(self):
         """ Compute muestra la imagen de entrada con las figuras detectadas contorneadas
             (rectangulos, cuadrados y circulos). Ademas, muestra en pantalla el numero de
             figuras encontradas de cada tipo.
         """
-        pass
+        imgs_numbers = [mt.match_templates(img) for img in self.imgs]
+        
+        imgs_matched, list_numbers = map(list, zip(*imgs_numbers))
 
+       # print(list_numbers)
+
+        list_imgs = list(map(self.resize_img, imgs_matched))
+        self.MainWindow.viewer_counter1.setPixmap(list_imgs[0])
+        self.MainWindow.viewer_counter2.setPixmap(list_imgs[1])
+        self.MainWindow.viewer_counter3.setPixmap(list_imgs[2])
+
+        sorted_numbers = list(map(lambda list_numb: sorted (list_numb, key= lambda number: number[1][0]), list_numbers))
+        
+        print(sorted_numbers)
+
+        numbers = list(map(lambda str_num: tuple(map(lambda x: x[0][0], str_num)), sorted_numbers))
+        
+        numbers_str = tuple(map(lambda str_num: "{}{}{}.{}".format(str_num[0], str_num[1], str_num[2], str_num[3]), numbers))
+
+        print(numbers_str)
+        self.MainWindow.resultado1.setPlainText(numbers_str[0])
+        self.MainWindow.resultado2.setPlainText(numbers_str[1])
+        self.MainWindow.resultado3.setPlainText(numbers_str[2])
+
+
+
+    def resize_img (self, img):
+        self.resized_crop_img = cv2.resize(img, (304, 130), cv2.INTER_CUBIC) 
+        cropped_img = QtGui.QImage(self.resized_crop_img, 304, 130, QtGui.QImage.Format_RGB888)
+        pixmap = QtGui.QPixmap()
+        pixmap.convertFromImage(cropped_img.rgbSwapped())
+        return pixmap
 
     def clipping(self):
+        self.imgs = []
         for i in range(len(self.rectangleAreas)):
             x, y, w, h = self.rectangleAreas[i][0], self.rectangleAreas[i][1], self.rectangleAreas[i][2], self.rectangleAreas[i][3]
             
@@ -55,7 +84,8 @@ class MainWindow ():
                 self.MainWindow.viewer_counter2.setPixmap(pixmap)
             if (i == 2):
 	            self.MainWindow.viewer_counter3.setPixmap(pixmap)
-        
+
+            self.imgs.append(self.crop_img)
 
 
     def getFile(self):
