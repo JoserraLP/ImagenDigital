@@ -1,0 +1,72 @@
+-----------------------------------------------------------------------
+Nombre del fichero: capturas_1.jpg
+Contador 1: 214.2 | Valor esperado: 214.2
+Contador 2: 239.7 | Valor esperado: 239.7
+Contador 3: 195.3 | Valor esperado: 195.3
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+Nombre del fichero: capturas_10.jpg
+Contador 1: 165.5 | Valor esperado: 165.9
+Contador 2: 169.3 | Valor esperado: 169.3
+Contador 3: 135.0 | Valor esperado: 135.0
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+Nombre del fichero: capturas_11.jpg
+Contador 1: 157.3 | Valor esperado: 157.3
+Contador 2: 187.8 | Valor esperado: 187.8
+Contador 3: 135.0 | Valor esperado: 135.0
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+Nombre del fichero: capturas_12.jpg
+Contador 1: 150.3 | Valor esperado: 150.3
+Contador 2: 169.3 | Valor esperado: 169.3
+Contador 3: 147.4 | Valor esperado: 147.4
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+Nombre del fichero: capturas_2.jpg
+Contador 1: 198.6 | Valor esperado: 198.6
+Contador 2: 206.4 | Valor esperado: 206.4
+Contador 3: 212.0 | Valor esperado: 212.0
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+Nombre del fichero: capturas_3.jpg
+Contador 1: 190.6 | Valor esperado: 190.6
+Contador 2: 208.7 | Valor esperado: 208.1
+Contador 3: 340.6 | Valor esperado: 234.6
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+Nombre del fichero: capturas_4.jpg
+Contador 1: 170.7 | Valor esperado: 170.7
+Contador 2: 196.6 | Valor esperado: 196.6
+Contador 3: 210.9 | Valor esperado: 210.9
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+Nombre del fichero: capturas_5.jpg
+Contador 1: 156.2 | Valor esperado: 156.2
+Contador 2: 183.5 | Valor esperado: 183.5
+Contador 3: 178.6 | Valor esperado: 178.6
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+Nombre del fichero: capturas_6.jpg
+Contador 1: 134.2 | Valor esperado: 135.2
+Contador 2: 162.2 | Valor esperado: 162.2
+Contador 3: 182.9 | Valor esperado: 182.9
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+Nombre del fichero: capturas_7.jpg
+Contador 1: 167.5 | Valor esperado: 167.5
+Contador 2: 157.8 | Valor esperado: 157.8
+Contador 3: 160.9 | Valor esperado: 160.9
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+Nombre del fichero: capturas_8.jpg
+Contador 1: 127.8 | Valor esperado: 127.8
+Contador 2: 160.0 | Valor esperado: 160.0
+Contador 3: 149.6 | Valor esperado: 149.6
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+Nombre del fichero: capturas_9.jpg
+Contador 1: 145.8 | Valor esperado: 149.8
+Contador 2: 178.0 | Valor esperado: 178.0
+Contador 3: 146.9 | Valor esperado: 146.9
+-----------------------------------------------------------------------
