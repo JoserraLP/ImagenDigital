@@ -9,16 +9,11 @@ import numpy as np
 import geometrics
 import cvqtmanage as mng
 import match_template as mt
+import json_loader as jl
 
 class MainWindow ():
     """ Clase principal que gestiona la interfaz de usuario
     """
-
-    rectangleAreas=[
-        (1030,564,400,140),
-        (1030,850,400,140),
-        (1030,1144,400,140)
-    ]
 
     capturas = {"capturas_{}.jpg".format(i):i for i in range(1,13)} # Diccionario para tener indexadas las capturas
 
@@ -38,51 +33,71 @@ class MainWindow ():
     }
 
     def __init__(self):
+        # Para limpiar el fichero
+        file = open("salida.txt", 'w')
+        file.close()
         #Cargar la interfaz gráfica "mainwindow.ui" en MainWindow
         self.MainWindow = uic.loadUi("mainwindow.ui")
         #Poner el titulo a la ventana MainWindow
         self.MainWindow.setWindowTitle("MATCH TEMPLATE --- TAREA 2")
-        self.geo = geometrics.Geometrics()
-        self.MainWindow.Load_button.clicked.connect(self.getFile)
+        #Cargar las coordenadas de los rectangulos de un JSON
+        self.loadCoordinates()
+        #Activar acciones de los botones 
+        self.MainWindow.Load_button.clicked.connect(self.loadFile)
         self.MainWindow.Clip_button.clicked.connect(self.clipping)
-        self.MainWindow.OCR_button.clicked.connect(self.compute)
+        self.MainWindow.OCR_button.clicked.connect(self.extractNumbers)
         self.MainWindow.GLOBAL_button.clicked.connect(self.globalButton)
+
         self.isGlobal = False
-        
+        #Deshabilitar botones
+        self.MainWindow.Clip_button.setEnabled(False)
+        self.MainWindow.OCR_button.setEnabled(False)
     
-    def compute(self):
-        """ Compute se encarga de realizar la extracción de los números de los contadores y de escribir estos
+    def extractNumbers(self):
+        """ extractNumbers se encarga de realizar la extracción de los números de los contadores y de escribir estos
             números en los recuadros de la derecha
         """
+        #Obtener las imagenes de los numeros
         imgs_numbers = [mt.match_templates(img) for img in self.imgs] 
         
-        imgs_matched, list_numbers = map(list, zip(*imgs_numbers)) # Separamos el resultado anterior en dos listas para trabajar más fácilmente
+        #Separar el resultado anterior en dos listas para trabajar más fácilmente
+        imgs_matched, list_numbers = map(list, zip(*imgs_numbers)) 
 
-        list_imgs = list(map(self.resize_img, imgs_matched)) #Le aplicamos la funcion resize_img para que lo devuelva en formato pixmap y sea legible por Qt
+        #Aplicar la funcion resize_img para que lo devuelva en formato pixmap y sea legible por Qt
+        list_imgs = list(map(self.resize_img, imgs_matched)) 
         if self.isGlobal == False:
             self.MainWindow.viewer_counter1.setPixmap(list_imgs[0])
             self.MainWindow.viewer_counter2.setPixmap(list_imgs[1])
             self.MainWindow.viewer_counter3.setPixmap(list_imgs[2])
 
+        #Ordenar la lista de numeros
         sorted_numbers = list(map(lambda list_numb: sorted (list_numb, key= lambda number: number[1][0]), list_numbers)) # Ordenamos la lista por la primera coordenada
 
+        #Obtener los numeros que hay en las imagenes
         numbers = list(map(lambda str_num: tuple(map(lambda x: x[0][0], str_num)), sorted_numbers)) # 
         
+        #Transformar los numeros a string
         numbers_str = tuple(map(lambda str_num: "{}{}{}.{}".format(str_num[0], str_num[1], str_num[2], str_num[3]), numbers)) # Pasamos a formato string los números de los contadores extraídos
 
+        #Indicar valores de los contadores en los resultados
         if self.isGlobal == False:
             self.MainWindow.resultado1.setPlainText(numbers_str[0])
             self.MainWindow.resultado2.setPlainText(numbers_str[1])
             self.MainWindow.resultado3.setPlainText(numbers_str[2])
 
-        if self.isGlobal:
-            with open ("salida.txt", 'a') as file:
-                file.write("-----------------------------------------------------------------------\n")
-                file.write("Nombre del fichero: " + self.fname + "\n")
-                file.write("Contador 1: " + numbers_str[0] + " | Valor esperado: " + self.valoresEsperados[str(self.capturas[self.fname])][0] + "\n")
-                file.write("Contador 2: " + numbers_str[1] + " | Valor esperado: " + self.valoresEsperados[str(self.capturas[self.fname])][1] + "\n")
-                file.write("Contador 3: " + numbers_str[2] + " | Valor esperado: " + self.valoresEsperados[str(self.capturas[self.fname])][2] +"\n")
-                file.write("-----------------------------------------------------------------------\n")
+        #Obtener numeros del fichero
+        fileNumber = self.fname[-6:-4]
+        if ('_' in fileNumber):
+            fileNumber = fileNumber[1]
+
+        #Escribir en el fichero
+        with open ("salida.txt", 'a') as file:
+            file.write("-----------------------------------------------------------------------\n")
+            file.write("Nombre del fichero: " + self.fname + "\n")
+            file.write("Contador 1: " + numbers_str[0] + " | Valor esperado: " + self.valoresEsperados[str(fileNumber)][0] + "\n")
+            file.write("Contador 2: " + numbers_str[1] + " | Valor esperado: " + self.valoresEsperados[str(fileNumber)][1] + "\n")
+            file.write("Contador 3: " + numbers_str[2] + " | Valor esperado: " + self.valoresEsperados[str(fileNumber)][2] +"\n")
+            file.write("-----------------------------------------------------------------------\n")
 
     def resize_img (self, img):
         """ Devuelve img en formato pixmap y le aplica resize
@@ -122,17 +137,31 @@ class MainWindow ():
                     self.MainWindow.viewer_counter3.setPixmap(pixmap)
             self.imgs.append(self.crop_img)
 
+        #Habilitar boton
+        self.MainWindow.OCR_button.setEnabled(True)
 
-    def getFile(self):
-        """ getFile se encarga de la carga de la captura cuando se pulsa en el botón Load Image
 
+    def loadFile(self):
+        """ loadFile se encarga de la carga de la captura cuando se pulsa en el botón Load Image
         """
+
         self.fname, _ = QFileDialog.getOpenFileName(self.MainWindow, 'Open file', './',"Image files (*.jpg *.gif)")
         self.original_img = cv2.imread(self.fname, cv2.IMREAD_COLOR)
+
+        # Limpiar los widgets
+        self.MainWindow.resultado1.setPlainText('')
+        self.MainWindow.resultado2.setPlainText('')
+        self.MainWindow.resultado3.setPlainText('')
+        self.MainWindow.viewer_counter1.clear()
+        self.MainWindow.viewer_counter2.clear()
+        self.MainWindow.viewer_counter3.clear()
+
+        #Habilitar/Deshabilitar los botones
+        self.MainWindow.Clip_button.setEnabled(True)
+        self.MainWindow.OCR_button.setEnabled(False)
+
         # Cambiada de tamanio
         self.resized_img = cv2.resize(self.original_img, (720, 540), cv2.INTER_CUBIC)
-
-        self.resized_img = self.geo.find_quadrilaterals(self.resized_img)
         
         image = QtGui.QImage(self.resized_img, 720, 540, QtGui.QImage.Format_RGB888)
         pixmap = QtGui.QPixmap()
@@ -142,16 +171,35 @@ class MainWindow ():
     def globalButton(self):
         """ globalButton se encarga de escribir en un fichero de salida los resultados de todas las capturas.
         """
-        open('salida.txt', 'w').close()
         self.isGlobal = True
         DIR = "capturas"
         filenames = [name for name in os.listdir(DIR) if os.path.isfile(os.path.join(DIR, name))]
-        print (filenames)
         
         for name in filenames:
             self.fname = name
             self.original_img = cv2.imread("{}/{}".format(DIR, self.fname), cv2.IMREAD_COLOR)
             self.clipping()
-            self.compute()
+            self.extractNumbers()
+        
         self.isGlobal = False
         
+        #Limpiar los widgets
+        self.MainWindow.resultado1.setPlainText('')
+        self.MainWindow.resultado2.setPlainText('')
+        self.MainWindow.resultado3.setPlainText('')
+        self.MainWindow.viewer_counter1.clear()
+        self.MainWindow.viewer_counter2.clear()
+        self.MainWindow.viewer_counter3.clear()
+        #Deshabilitar botones
+        self.MainWindow.Clip_button.setEnabled(False)
+        self.MainWindow.OCR_button.setEnabled(False)
+        self.MainWindow.viewer_original.setText('Completada ejecución global, compruebe el fichero "salida.txt"')
+        
+    def loadCoordinates (self):
+        """ loadCoordinates carga las coordenadas de los rectangulos de los contadores desde un fichero JSON
+        """
+        coordinates = jl.JsonLoader.load('fichero.json')["coordenadas"]
+        self.rectangleAreas = []
+        self.rectangleAreas.append((coordinates["rect_1"][0], coordinates["rect_1"][1], coordinates["rect_1"][2], coordinates["rect_1"][3]))
+        self.rectangleAreas.append((coordinates["rect_2"][0], coordinates["rect_2"][1], coordinates["rect_2"][2], coordinates["rect_2"][3]))
+        self.rectangleAreas.append((coordinates["rect_3"][0], coordinates["rect_3"][1], coordinates["rect_3"][2], coordinates["rect_3"][3]))
