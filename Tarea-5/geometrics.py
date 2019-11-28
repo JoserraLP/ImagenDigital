@@ -39,7 +39,9 @@ class Geometrics():
         output = img.copy()
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         #Aplicar a la imagen de entrada un efecto Blur
-        img = cv2.GaussianBlur(img, (5,5), sigmax, sigmay)
+        #img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 91, 12)
+        #img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 91, 12)
+        cv2.GaussianBlur(img, (5,5), sigmax, sigmay)
         #Definir arrays para los distintos elementos
         rectangles = []
         canny = cv2.Canny(img, thres1, thres2, apertureSize=5)
