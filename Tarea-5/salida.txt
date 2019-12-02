@@ -1,12 +1,6 @@
 -----------------------------------------------------------------------
-Nombre del fichero: /home/joserralp/Desktop/ID/GitHub/ImagenDigital/Tarea-5/capturas/capturas_2.jpg
-Contador 1: 198.6 | Valor esperado: 198.6
-Contador 2: 206.4 | Valor esperado: 206.4
-Contador 3: 212.0 | Valor esperado: 212.0
------------------------------------------------------------------------
------------------------------------------------------------------------
-Nombre del fichero: /home/joserralp/Desktop/ID/GitHub/ImagenDigital/Tarea-5/capturas/capturas_2.jpg
-Contador 1: 198.6 | Valor esperado: 198.6
-Contador 2: 206.4 | Valor esperado: 206.4
-Contador 3: 212.0 | Valor esperado: 212.0
+Nombre del fichero: C:/Users/nogal/Documents/Imagen Digital/ImagenDigital/Tarea-5/capturas/capturas_1.jpg
+Contador 1: 214.2 | Valor esperado: 214.2
+Contador 2: 239.7 | Valor esperado: 239.7
+Contador 3: 195.3 | Valor esperado: 195.3
 -----------------------------------------------------------------------

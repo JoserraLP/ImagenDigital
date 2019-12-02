@@ -6,8 +6,6 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import numpy as np
-import geometrics
-import cvqtmanage as mng
 import match_template as mt
 import json_loader as jl
 
@@ -171,6 +169,7 @@ class MainWindow ():
     def globalButton(self):
         """ globalButton se encarga de escribir en un fichero de salida los resultados de todas las capturas.
         """
+        open('salida.txt', 'w').close()
         self.isGlobal = True
         DIR = "capturas"
         filenames = [name for name in os.listdir(DIR) if os.path.isfile(os.path.join(DIR, name))]
