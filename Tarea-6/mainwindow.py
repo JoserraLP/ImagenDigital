@@ -7,8 +7,23 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import numpy as np
 import cvqtmanage as mng
+import background_subtraction as bs
 
 MAX_IMG = 2
+
+def check_video(f):
+    def wrapper(*args):
+        #Obtener la imagen de la camara
+        _, args[0].cap = args[0].video.read()
+        if (args[0].cap is not None):
+            f(*args)
+        else:
+            args[0].MainWindow.loadVideoButton.setEnabled(True)
+            args[0].MainWindow.video.clear()
+            args[0].MainWindow.filter_video.clear()
+            args[0].MainWindow.video.setText('El video ha terminado')
+            args[0].MainWindow.filter_video.setText('El video ha terminado')
+    return wrapper
 
 class MainWindow ():
     """ Clase principal que gestiona la interfaz de usuario
@@ -47,6 +62,12 @@ class MainWindow ():
         
         self.MainWindow.velocity.valueChanged.connect(self.changeVelocity)
 
+        self.MainWindow.threshold.setRange(1,255)
+        self.MainWindow.threshold.setValue(150)
+        
+        self.MainWindow.threshold.setSingleStep(1)
+
+
     def loadVideo(self):
         """ loadVideo se encarga de la carga del video se pulsa en el botón Load Video
         """
@@ -60,11 +81,12 @@ class MainWindow ():
         #Habilitar botones
         self.MainWindow.startVideoButton.setEnabled(True)
         self.MainWindow.pauseVideoButton.setEnabled(True)
-
+        
         self.MainWindow.video.clear()
         self.MainWindow.filter_video.clear()
         self.MainWindow.video.setText('Video cargado, haz click en "Start Video"')
         self.MainWindow.filter_video.setText('Video cargado, haz click en "Start Video"')
+
 
     def changeVelocity(self):
         self.velocity = self.MainWindow.velocity.value()
@@ -73,6 +95,9 @@ class MainWindow ():
         self.timer_frames.start(self.velocity)
 
     def startVideo(self):
+        #Obtener la imagen de la camara
+        _, self.cap = self.video.read()
+        self.first_frame = self.cap.copy()
         #Establecer el timer del filtro en 50 ms
         self.timer_filter = QtCore.QTimer(self.MainWindow)
         self.timer_filter.timeout.connect(self.compute)
@@ -87,30 +112,23 @@ class MainWindow ():
         self.timer_filter.stop()
         self.timer_frames.stop()
 
-    def resize_img(self):
-        # Cambiada de tamanio
-        for i in range(len(self.cv_video)):
-            self.cv_video[i] = cv2.resize(self.cap.copy(), (350, 250), cv2.INTER_CUBIC)
-
+    @check_video
     def show_frames(self):
         """ Convierte las imagenes de OpenCV a formato legible por Qt
             para poder visualizarlas en la interfaz
         """
         for i in range(len(self.qt_video)):
-            if (self.cap is not None):
-                mng.convertCV2ToQimage(self.cv_video[i],self.qt_video[i]) 
-
+            mng.convertCV2ToQimage(self.cv_video[i],self.qt_video[i])
         
+    @check_video
     def compute(self):
-        #Obtener la imagen de la camara
-        _, self.cap = self.video.read()
-        if (self.cap is not None):
-            self.cv_video[0] = self.cap.copy()
-            self.cv_video[1] = self.cap.copy()
-            self.resize_img()
-        else:
-            self.MainWindow.loadVideoButton.setEnabled(True)
-            self.MainWindow.video.clear()
-            self.MainWindow.filter_video.clear()
-            self.MainWindow.video.setText('El video ha terminado')
-            self.MainWindow.filter_video.setText('El video ha terminado')
+        self.cv_video[0] = self.cap.copy()
+
+        bar1_cal = self.cv_video[0].shape[0] - int((self.MainWindow.barrier1.value()/100)*self.cv_video[0].shape[0])
+        bar2_cal = self.cv_video[0].shape[0] - int((self.MainWindow.barrier2.value()/100)*self.cv_video[0].shape[0])
+        
+        self.cv_video[1] = bs.background_subtraction(self.cv_video[0], self.first_frame, threshold=self.MainWindow.threshold.value(), bar1=bar1_cal, bar2=bar2_cal)
+
+        self.cv_video = list(map(lambda vid: cv2.resize(vid, (350, 250), cv2.INTER_CUBIC),self.cv_video))
+        
+
