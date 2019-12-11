@@ -8,6 +8,7 @@ from PyQt5.QtGui import *
 import numpy as np
 import cvqtmanage as mng
 import background_subtraction as bs
+import state_machine as sm
 
 MAX_IMG = 2
 
@@ -19,6 +20,8 @@ def check_video(f):
             f(*args)
         else:
             args[0].MainWindow.loadVideoButton.setEnabled(True)
+            args[0].MainWindow.pauseVideoButton.setEnabled(False)
+            args[0].MainWindow.startVideoButton.setEnabled(False)
             args[0].MainWindow.video.clear()
             args[0].MainWindow.filter_video.clear()
             args[0].MainWindow.video.setText('El video ha terminado')
@@ -40,6 +43,8 @@ class MainWindow ():
         self.MainWindow.startVideoButton.clicked.connect(self.startVideo)
         self.MainWindow.pauseVideoButton.clicked.connect(self.pauseVideo)
 
+        self.MainWindow.allProcessVideo.clicked.connect(self.allProcess)
+
         self.velocity = self.MainWindow.velocity.value()
 
         #Crear los videos de Qt
@@ -56,6 +61,8 @@ class MainWindow ():
         self.MainWindow.startVideoButton.setEnabled(False)
         self.MainWindow.pauseVideoButton.setEnabled(False)
 
+        self.MainWindow.allProcessVideo.setEnabled(False)
+
         self.MainWindow.velocity.setMinimum(3)
         self.MainWindow.velocity.setMaximum(100)
         self.MainWindow.velocity.setSingleStep(1)
@@ -63,10 +70,20 @@ class MainWindow ():
         self.MainWindow.velocity.valueChanged.connect(self.changeVelocity)
 
         self.MainWindow.threshold.setRange(1,255)
-        self.MainWindow.threshold.setValue(150)
-        
+        self.MainWindow.threshold.setValue(70)
         self.MainWindow.threshold.setSingleStep(1)
 
+        self.MainWindow.radio.setMinimum(5)
+        self.MainWindow.radio.setMaximum(25)
+        self.MainWindow.radio.setValue(15)
+
+        self.MainWindow.radio.valueChanged.connect(self.changeCentroid)
+
+        self.state_machine = sm.StateMachine()
+        self.contador = 1
+
+    def changeCentroid(self):
+        self.MainWindow.radio_value.display(self.MainWindow.radio.value()) 
 
     def loadVideo(self):
         """ loadVideo se encarga de la carga del video se pulsa en el botón Load Video
@@ -80,7 +97,7 @@ class MainWindow ():
         self.MainWindow.loadVideoButton.setEnabled(False)
         #Habilitar botones
         self.MainWindow.startVideoButton.setEnabled(True)
-        self.MainWindow.pauseVideoButton.setEnabled(True)
+        self.MainWindow.allProcessVideo.setEnabled(True)
         
         self.MainWindow.video.clear()
         self.MainWindow.filter_video.clear()
@@ -97,20 +114,27 @@ class MainWindow ():
     def startVideo(self):
         #Obtener la imagen de la camara
         _, self.cap = self.video.read()
+        
         self.first_frame = self.cap.copy()
-        #Establecer el timer del filtro en 50 ms
+        #Establecer el timer del filtro
         self.timer_filter = QtCore.QTimer(self.MainWindow)
         self.timer_filter.timeout.connect(self.compute)
         self.timer_filter.start(self.velocity)
 
-        #Establecer el timer de la camara en 50 ms
+        #Establecer el timer de la camara
         self.timer_frames = QtCore.QTimer(self.MainWindow)
         self.timer_frames.timeout.connect(self.show_frames)
         self.timer_frames.start(self.velocity)
 
+        self.MainWindow.startVideoButton.setEnabled(False)
+        self.MainWindow.pauseVideoButton.setEnabled(True)
+
     def pauseVideo(self):
         self.timer_filter.stop()
         self.timer_frames.stop()
+
+        self.MainWindow.pauseVideoButton.setEnabled(False)
+        self.MainWindow.startVideoButton.setEnabled(True)
 
     @check_video
     def show_frames(self):
@@ -126,9 +150,13 @@ class MainWindow ():
 
         bar1_cal = self.cv_video[0].shape[0] - int((self.MainWindow.barrier1.value()/100)*self.cv_video[0].shape[0])
         bar2_cal = self.cv_video[0].shape[0] - int((self.MainWindow.barrier2.value()/100)*self.cv_video[0].shape[0])
-        
-        self.cv_video[1] = bs.background_subtraction(self.cv_video[0], self.first_frame, threshold=self.MainWindow.threshold.value(), bar1=bar1_cal, bar2=bar2_cal)
+
+        self.cv_video[1], self.contador, self.processImages = bs.background_subtraction(self.cv_video[0], self.first_frame, sm=self.state_machine, threshold=self.MainWindow.threshold.value(), bar1=bar1_cal, bar2=bar2_cal, radio=self.MainWindow.radio.value())
 
         self.cv_video = list(map(lambda vid: cv2.resize(vid, (350, 250), cv2.INTER_CUBIC),self.cv_video))
-        
+
+        self.MainWindow.counter.display(self.contador)
+
+    def allProcess(self):
+        map(lambda video_tuple : cv2.imshow(video_tuple[0], video_tuple[1]), self.processImages)
 

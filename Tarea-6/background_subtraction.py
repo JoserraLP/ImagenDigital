@@ -1,13 +1,12 @@
 import cv2
 import numpy as np 
 
-def background_subtraction(img, background, threshold =150, bar1=50, bar2=80):
+def background_subtraction(img, background, sm, threshold=150, bar1=80, bar2=50, radio=15):
     
     image = img.copy()
     
     lineThickness = 2
     
-
     cv2.line(image, (0, bar1), (image.shape[1], bar1), (255,255,0), lineThickness)
 
     cv2.line(image, (0, bar2), (image.shape[1], bar2), (0,255,0), lineThickness)
@@ -33,10 +32,11 @@ def background_subtraction(img, background, threshold =150, bar1=50, bar2=80):
     cX = int(M["m10"] / (M["m00"] + 1e-5))
     cY = int(M["m01"] / (M["m00"] + 1e-5))
 
-
+    sm.updateBarriers(bar1, bar2)
+    contador = sm.checkBarrier(cY)
     
     if (cX is not 0 and cY is not 0):
         # put text and highlight the center
-        cv2.circle(image, (cX, cY), 17, (0, 128, 128), -1)
+        cv2.circle(image, (cX, cY), radio, (0, 128, 128), -1)
 
-    return image
+    return image, contador, [("Gray",gray), ("Diff",diff), ("Threshold",thres)]
