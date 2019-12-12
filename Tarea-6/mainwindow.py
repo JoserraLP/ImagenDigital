@@ -12,9 +12,10 @@ import state_machine as sm
 
 MAX_IMG = 2
 
+
 def check_video(f):
     def wrapper(*args):
-        #Obtener la imagen de la camara
+        # Obtener la imagen de la camara
         _, args[0].cap = args[0].video.read()
         if (args[0].cap is not None):
             f(*args)
@@ -28,17 +29,18 @@ def check_video(f):
             args[0].MainWindow.filter_video.setText('El video ha terminado')
     return wrapper
 
+
 class MainWindow ():
     """ Clase principal que gestiona la interfaz de usuario
     """
 
     def __init__(self):
-        #Cargar la interfaz gráfica "mainwindow.ui" en MainWindow
+        # Cargar la interfaz gráfica "mainwindow.ui" en MainWindow
         self.MainWindow = uic.loadUi("mainwindow.ui")
-        #Poner el titulo a la ventana MainWindow
+        # Poner el titulo a la ventana MainWindow
         self.MainWindow.setWindowTitle("Paso de aula")
-      
-        #Activar acciones de los botones 
+
+        # Activar acciones de los botones
         self.MainWindow.loadVideoButton.clicked.connect(self.loadVideo)
         self.MainWindow.startVideoButton.clicked.connect(self.startVideo)
         self.MainWindow.pauseVideoButton.clicked.connect(self.pauseVideo)
@@ -47,13 +49,13 @@ class MainWindow ():
 
         self.velocity = self.MainWindow.velocity.value()
 
-        #Crear los videos de Qt
+        # Crear los videos de Qt
         self.qt_video = [self.MainWindow.video, self.MainWindow.filter_video]
         self.cv_video = []
-        
+
         self.video = cv2.VideoCapture()
 
-        blue_image = np.zeros((640,480,3), np.uint8)
+        blue_image = np.zeros((640, 480, 3), np.uint8)
         blue_image[:] = (255, 0, 0)
         for i in range(MAX_IMG):
             self.cv_video.append(blue_image)
@@ -66,10 +68,10 @@ class MainWindow ():
         self.MainWindow.velocity.setMinimum(3)
         self.MainWindow.velocity.setMaximum(100)
         self.MainWindow.velocity.setSingleStep(1)
-        
+
         self.MainWindow.velocity.valueChanged.connect(self.changeVelocity)
 
-        self.MainWindow.threshold.setRange(1,255)
+        self.MainWindow.threshold.setRange(1, 255)
         self.MainWindow.threshold.setValue(70)
         self.MainWindow.threshold.setSingleStep(1)
 
@@ -82,49 +84,73 @@ class MainWindow ():
         self.state_machine = sm.StateMachine()
         self.contador = 1
 
+        self.show_process = False
+
     def changeCentroid(self):
-        self.MainWindow.radio_value.display(self.MainWindow.radio.value()) 
+        self.MainWindow.radio_value.display(self.MainWindow.radio.value())
 
     def loadVideo(self):
         """ loadVideo se encarga de la carga del video se pulsa en el botón Load Video
         """
 
-        self.fname, _ = QFileDialog.getOpenFileName(self.MainWindow, 'Open file', './',"Video files (*.wmv)")
+        self.fname, _ = QFileDialog.getOpenFileName(
+            self.MainWindow, 'Open file', './', "Video files (*.wmv)")
 
         self.video = cv2.VideoCapture(self.fname)
 
-        #Deshabilitar boton
+        total = int(self.video.get(cv2.CAP_PROP_FRAME_COUNT))
+        fps = ((1/self.velocity)*1000)/2
+        #fps = self.video.get(cv2.CAP_PROP_FPS)
+        print (fps)
+        self.duration = (total / fps)
+        print(total)
+        print (self.duration)
+
+
+
+
+        self.video_progress = 0
+        
+
+        # Deshabilitar boton
         self.MainWindow.loadVideoButton.setEnabled(False)
-        #Habilitar botones
+        # Habilitar botones
         self.MainWindow.startVideoButton.setEnabled(True)
         self.MainWindow.allProcessVideo.setEnabled(True)
-        
+
         self.MainWindow.video.clear()
         self.MainWindow.filter_video.clear()
-        self.MainWindow.video.setText('Video cargado, haz click en "Start Video"')
-        self.MainWindow.filter_video.setText('Video cargado, haz click en "Start Video"')
-
+        self.MainWindow.video.setText(
+            'Video cargado, haz click en "Start Video"')
+        self.MainWindow.filter_video.setText(
+            'Video cargado, haz click en "Start Video"')
 
     def changeVelocity(self):
         self.velocity = self.MainWindow.velocity.value()
         self.MainWindow.velocity.textFromValue(self.velocity)
         self.timer_filter.start(self.velocity)
         self.timer_frames.start(self.velocity)
+        self.timer_progress.star(self.velocity)
 
     def startVideo(self):
-        #Obtener la imagen de la camara
+        # Obtener la imagen de la camara
         _, self.cap = self.video.read()
-        
+
         self.first_frame = self.cap.copy()
-        #Establecer el timer del filtro
+        # Establecer el timer del filtro
         self.timer_filter = QtCore.QTimer(self.MainWindow)
         self.timer_filter.timeout.connect(self.compute)
         self.timer_filter.start(self.velocity)
 
-        #Establecer el timer de la camara
+        # Establecer el timer de la camara
         self.timer_frames = QtCore.QTimer(self.MainWindow)
         self.timer_frames.timeout.connect(self.show_frames)
         self.timer_frames.start(self.velocity)
+
+        #Timer para barra de progreso del video
+        self.timer_progress = QtCore.QTimer(self.MainWindow)
+        self.timer_progress.timeout.connect(self.progressVideo)
+        self.timer_progress.start(self.velocity)
 
         self.MainWindow.startVideoButton.setEnabled(False)
         self.MainWindow.pauseVideoButton.setEnabled(True)
@@ -132,6 +158,7 @@ class MainWindow ():
     def pauseVideo(self):
         self.timer_filter.stop()
         self.timer_frames.stop()
+        self.timer_progress.stop()
 
         self.MainWindow.pauseVideoButton.setEnabled(False)
         self.MainWindow.startVideoButton.setEnabled(True)
@@ -142,21 +169,32 @@ class MainWindow ():
             para poder visualizarlas en la interfaz
         """
         for i in range(len(self.qt_video)):
-            mng.convertCV2ToQimage(self.cv_video[i],self.qt_video[i])
-        
+            mng.convertCV2ToQimage(self.cv_video[i], self.qt_video[i])
+
     @check_video
     def compute(self):
         self.cv_video[0] = self.cap.copy()
 
-        bar1_cal = self.cv_video[0].shape[0] - int((self.MainWindow.barrier1.value()/100)*self.cv_video[0].shape[0])
-        bar2_cal = self.cv_video[0].shape[0] - int((self.MainWindow.barrier2.value()/100)*self.cv_video[0].shape[0])
+        bar1_cal = self.cv_video[0].shape[0] - int(
+            (self.MainWindow.barrier1.value() / 100) * self.cv_video[0].shape[0])
+        bar2_cal = self.cv_video[0].shape[0] - int(
+            (self.MainWindow.barrier2.value() / 100) * self.cv_video[0].shape[0])
 
-        self.cv_video[1], self.contador, self.processImages = bs.background_subtraction(self.cv_video[0], self.first_frame, sm=self.state_machine, threshold=self.MainWindow.threshold.value(), bar1=bar1_cal, bar2=bar2_cal, radio=self.MainWindow.radio.value())
+        self.cv_video[1], self.contador = bs.background_subtraction(self.cv_video[0], self.first_frame, sm=self.state_machine, threshold=self.MainWindow.threshold.value(
+        ), bar1=bar1_cal, bar2=bar2_cal, radio=self.MainWindow.radio.value(), showProcess=self.show_process)
 
-        self.cv_video = list(map(lambda vid: cv2.resize(vid, (350, 250), cv2.INTER_CUBIC),self.cv_video))
+        self.cv_video = list(map(lambda vid: cv2.resize(
+            vid, (350, 250), cv2.INTER_CUBIC), self.cv_video))
 
         self.MainWindow.counter.display(self.contador)
 
     def allProcess(self):
-        map(lambda video_tuple : cv2.imshow(video_tuple[0], video_tuple[1]), self.processImages)
+        self.show_process = True
 
+    def progressVideo(self):
+        
+        percentage = 1
+
+        if (self.video_progress < 100):
+            self.video_progress += percentage
+            self.MainWindow.progressBar.setValue(int(self.video_progress))

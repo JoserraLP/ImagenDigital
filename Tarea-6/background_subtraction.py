@@ -1,15 +1,20 @@
 import cv2
-import numpy as np 
+import numpy as np
 
-def background_subtraction(img, background, sm, threshold=150, bar1=80, bar2=50, radio=15):
-    
+
+def background_subtraction(
+        img,
+        background,
+        sm,
+        threshold=150,
+        bar1=80,
+        bar2=50,
+        radio=15,
+        showProcess=False):
+
     image = img.copy()
-    
-    lineThickness = 2
-    
-    cv2.line(image, (0, bar1), (image.shape[1], bar1), (255,255,0), lineThickness)
 
-    cv2.line(image, (0, bar2), (image.shape[1], bar2), (0,255,0), lineThickness)
+    lineThickness = 2
 
     if (bar2 < bar1):
         bar1, bar2 = bar2, bar1
@@ -18,25 +23,36 @@ def background_subtraction(img, background, sm, threshold=150, bar1=80, bar2=50,
     first_gray = cv2.GaussianBlur(first_gray, (25, 25), 0)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    gray = cv2.GaussianBlur(gray, (25,25), 0)
+    gray = cv2.GaussianBlur(gray, (25, 25), 0)
 
     diff = cv2.absdiff(first_gray, gray)
- 
-    _,thres = cv2.threshold(diff, threshold, 255, cv2.THRESH_BINARY)
-    
+
+    _, thres = cv2.threshold(diff, threshold, 255, cv2.THRESH_BINARY)
+
+    if showProcess:
+        cv2.imshow("Gray", gray)
+        cv2.imshow("Diff", diff)
+        cv2.imshow("Thresh", thres)
+
     thres = cv2.dilate(thres, None, iterations=2)
 
     M = cv2.moments(thres)
- 
+
     # calculate x,y coordinate of center
     cX = int(M["m10"] / (M["m00"] + 1e-5))
     cY = int(M["m01"] / (M["m00"] + 1e-5))
 
     sm.updateBarriers(bar1, bar2)
     contador = sm.checkBarrier(cY)
-    
+
     if (cX is not 0 and cY is not 0):
         # put text and highlight the center
         cv2.circle(image, (cX, cY), radio, (0, 128, 128), -1)
+        
+    cv2.line(image, (0, bar1),
+             (image.shape[1], bar1), (255, 255, 0), lineThickness)
 
-    return image, contador, [("Gray",gray), ("Diff",diff), ("Threshold",thres)]
+    cv2.line(image, (0, bar2),
+             (image.shape[1], bar2), (0, 255, 0), lineThickness)
+
+    return image, contador
