@@ -1,11 +1,11 @@
 class StateMachine():
 
-    def __init__(self, bar_sup=0, bar_inf=0):
+    def __init__(self, bar_sup=0, bar_inf=0, cont=0):
         self.is_bar_sup_passed = True
         self.is_bar_inf_passed = True
         self.bar_sup = bar_sup
         self.bar_inf = bar_inf
-        self.contador = 1
+        self.contador = cont
         self.states = {
             'F': (False, False), #Fuera
             'D': (True, True), #Dentro
