@@ -2,7 +2,14 @@ from PyQt5 import QtGui
 import numpy as np
 
 def convertCV2ToQimage(cv_vid,qt_vid):
-    """ Convierte una imagen en formato de OpenCV (numpy array) a formato Qt
+    """ `convertCV2ToQimage`
+        
+        Convierte una imagen en formato de OpenCV (numpy array) a formato Qt
+
+        Parametros
+        ----------
+            - cv_vid  :  Imagen en formato numpy
+            - qt_vid  :  Imagen de salida en formato Qt
     """
     gray_color_table = [QtGui.qRgb(i, i, i) for i in range(256)]
     if cv_vid is None:

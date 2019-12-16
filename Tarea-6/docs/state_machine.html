@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>state_machine.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>state_machine.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p><code>StateMachine</code></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">StateMachine</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Maquina de estados para representar y gestionar los cuatro estados que surgen
+   teniendo las dos barreras de entrada.</p>
+<p>Estos cuatro estados son:
+       - F &ndash;&gt; FUERA
+       - D &ndash;&gt; DENTRO
+       - S &ndash;&gt; SALIENDO
+       - E &ndash;&gt; ENTRANDO</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">__author__</span>      <span class="o">=</span>   <span class="s2">&quot;Jose Ramon Lozano Pinilla, Javier Nogales Fernandez&quot;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p><code>__init__</code></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bar_sup</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">bar_inf</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cont</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Inicializa la clase <code>StateMachine</code></p>
+<p>Parametros</p>
+<hr />
+<ul>
+<li>bar_sup  :  Barrera superior</li>
+<li>bar_inf  :  Barrera inferior</li>
+<li>cont     :  Contador de elementos</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">is_bar_sup_passed</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_bar_inf_passed</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bar_sup</span> <span class="o">=</span> <span class="n">bar_sup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bar_inf</span> <span class="o">=</span> <span class="n">bar_inf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contador</span> <span class="o">=</span> <span class="n">cont</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">states</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="p">(</span><span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">),</span> <span class="c1">#Fuera</span>
+            <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span> <span class="c1">#Dentro</span>
+            <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="p">(</span><span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span> <span class="c1">#Saliendo</span>
+            <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> <span class="c1">#Entrando</span>
+        <span class="p">}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p><code>updateBarriers</code></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">updateBarriers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bar_sup</span><span class="p">,</span> <span class="n">bar_inf</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Actualiza las barreras con los valores actuales</p>
+<p>Parametros</p>
+<hr />
+<ul>
+<li>bar_sup  :  Nueva barrera superior</li>
+<li>bar_inf  :  Nueva barreara inferior</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">bar_sup</span> <span class="o">=</span> <span class="n">bar_sup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bar_inf</span> <span class="o">=</span> <span class="n">bar_inf</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p><code>checkBarrier</code></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">checkBarrier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">centroidY</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>Gestiona el contador dependiendo del estado en el que se encuentre y el estado anterior.</p>
+<p>Parametros</p>
+<hr />
+<ul>
+<li>centroidY  :  Ordenada del centroide</li>
+</ul>
+<p>Return</p>
+<hr />
+<ul>
+<li>contador  :  Contador de elementos dentro del aula</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="n">centroidY</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bar_sup</span><span class="p">):</span> <span class="c1"># Si estamos por encima de la barrera superior</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_bar_sup_passed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bar_inf_passed</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="s1">&#39;E&#39;</span><span class="p">]:</span> <span class="c1"># Si el estado anterior es ENTRANDO</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">contador</span> <span class="o">+=</span> <span class="mi">1</span> <span class="c1"># Aumentamos el contador</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_bar_sup_passed</span> <span class="o">=</span> <span class="bp">True</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_bar_inf_passed</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">centroidY</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bar_sup</span> <span class="ow">and</span> <span class="n">centroidY</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bar_inf</span><span class="p">):</span> <span class="c1"># Si estamos en medio de las dos barreras</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_bar_sup_passed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bar_inf_passed</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]:</span> <span class="c1"># Si el estado anterior es DENTRO</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">is_bar_sup_passed</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">is_bar_inf_passed</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_bar_sup_passed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bar_inf_passed</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="s1">&#39;F&#39;</span><span class="p">]:</span> <span class="c1">#Si el estado anterior es FUERA</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">is_bar_sup_passed</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">is_bar_inf_passed</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">centroidY</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bar_sup</span> <span class="ow">and</span> <span class="n">centroidY</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bar_inf</span><span class="p">):</span> <span class="c1">#Si estamos debajo de las dos barreras</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_bar_sup_passed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bar_inf_passed</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">]:</span> <span class="c1">#Si el estado anterior es SALIENDO</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">contador</span> <span class="o">-=</span> <span class="mi">1</span> <span class="c1"># Decrementamos el contador</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_bar_sup_passed</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_bar_inf_passed</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">contador</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

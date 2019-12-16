@@ -2,6 +2,11 @@ import cv2
 import numpy as np
 import imutils
 
+""" Script para realizar la funcion `background_subtraction` a una imagen de entrada
+"""
+
+__author__      =   "Jose Ramon Lozano Pinilla, Javier Nogales Fernandez"
+
 
 def background_subtraction(
         img,
@@ -12,6 +17,29 @@ def background_subtraction(
         bar2=50,
         radio=15,
         showProcess=False):
+
+    """ `background_subtraction` 
+    
+        Aplica una serie de filtros y calcula la diferencia con absdiff entre background e img
+        devolviendo una imagen dibujada con las barreras y el centroide y el contador de elementos.
+
+        Parametros
+        ----------
+        - img  :  Imagen de entrada
+        - background  :  Imagen de fondo de referencia para realizar la diferencia
+        - sm  :  Maquina de estados
+        - threshold  :  Umbral para descartar imagenes por debajo de este
+        - bar1  :  Barrera superior
+        - bar2  :  Barrera inferior
+        - radio :  Radio del circulo que representa el centroide
+        - showProcess  :  True si se quiere mostrar todo el proceso. Por defecto, inicializada a False
+
+        Return
+        ------
+        - image  :  Imagen de entrada filtrada y dibujada con las barreras y el centroide
+        - contador  :  Contador de elementos
+
+    """
 
     image = img.copy()
 
@@ -40,16 +68,15 @@ def background_subtraction(
 
     M = cv2.moments(thres)
 
-    # calculate x,y coordinate of center
-    cX = int(M["m10"] / (M["m00"] + 1e-5))
-    cY = int(M["m01"] / (M["m00"] + 1e-5))
+    
+    cX = int(M["m10"] / (M["m00"] + 1e-5)) #calcular x del centroide
+    cY = int(M["m01"] / (M["m00"] + 1e-5)) #calcular y del centroide
 
     if(len(cnts)!=0):
         c = max(cnts, key = cv2.contourArea)
     
         cv2.drawContours(contours_image, [c], -1, (0, 255, 0), 2)
         if (cX is not 0 and cY is not 0):
-	        # put text and highlight the center
             cv2.circle(image, (cX, cY), radio, (0, 128, 128), -1)
 
     sm.updateBarriers(bar1, bar2)

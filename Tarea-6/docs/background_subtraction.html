@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>background_subtraction.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>background_subtraction.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>Script para realizar la funcion <code>background_subtraction</code> a una imagen de entrada</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">imutils</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">__author__</span>      <span class="o">=</span>   <span class="s2">&quot;Jose Ramon Lozano Pinilla, Javier Nogales Fernandez&quot;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p><code>background_subtraction</code></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">background_subtraction</span><span class="p">(</span>
+        <span class="n">img</span><span class="p">,</span>
+        <span class="n">background</span><span class="p">,</span>
+        <span class="n">sm</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
+        <span class="n">bar1</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>
+        <span class="n">bar2</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+        <span class="n">radio</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+        <span class="n">showProcess</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <pre><code>
+</code></pre>
+<p>Aplica una serie de filtros y calcula la diferencia con absdiff entre background e img
+   devolviendo una imagen dibujada con las barreras y el centroide y el contador de elementos.</p>
+<p>Parametros</p>
+<hr />
+<ul>
+<li>img  :  Imagen de entrada</li>
+<li>background  :  Imagen de fondo de referencia para realizar la diferencia</li>
+<li>sm  :  Maquina de estados</li>
+<li>threshold  :  Umbral para descartar imagenes por debajo de este</li>
+<li>bar1  :  Barrera superior</li>
+<li>bar2  :  Barrera inferior</li>
+<li>radio :  Radio del circulo que representa el centroide</li>
+<li>showProcess  :  True si se quiere mostrar todo el proceso. Por defecto, inicializada a False</li>
+</ul>
+<p>Return</p>
+<hr />
+<ul>
+<li>image  :  Imagen de entrada filtrada y dibujada con las barreras y el centroide</li>
+<li>contador  :  Contador de elementos</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">image</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="n">lineThickness</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">bar2</span> <span class="o">&lt;</span> <span class="n">bar1</span><span class="p">):</span>
+        <span class="n">bar1</span><span class="p">,</span> <span class="n">bar2</span> <span class="o">=</span> <span class="n">bar2</span><span class="p">,</span> <span class="n">bar1</span>
+
+    <span class="n">first_gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">background</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+    <span class="n">first_gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">GaussianBlur</span><span class="p">(</span><span class="n">first_gray</span><span class="p">,</span> <span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">25</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+
+    <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">GaussianBlur</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">25</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">absdiff</span><span class="p">(</span><span class="n">first_gray</span><span class="p">,</span> <span class="n">gray</span><span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">thres</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">THRESH_BINARY</span><span class="p">)</span>
+        
+    <span class="n">thres</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">dilate</span><span class="p">(</span><span class="n">thres</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">cnts</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">findContours</span><span class="p">(</span><span class="n">thres</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">RETR_EXTERNAL</span><span class="p">,</span>
+		<span class="n">cv2</span><span class="o">.</span><span class="n">CHAIN_APPROX_SIMPLE</span><span class="p">)</span>
+    <span class="n">cnts</span> <span class="o">=</span> <span class="n">imutils</span><span class="o">.</span><span class="n">grab_contours</span><span class="p">(</span><span class="n">cnts</span><span class="p">)</span>
+
+    <span class="n">contours_image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="n">M</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">moments</span><span class="p">(</span><span class="n">thres</span><span class="p">)</span>
+
+    
+    <span class="n">cX</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="s2">&quot;m10&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="s2">&quot;m00&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1e-5</span><span class="p">))</span> <span class="c1">#calcular x del centroide</span>
+    <span class="n">cY</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="s2">&quot;m01&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="s2">&quot;m00&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1e-5</span><span class="p">))</span> <span class="c1">#calcular y del centroide</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cnts</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">cnts</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">contourArea</span><span class="p">)</span>
+    
+        <span class="n">cv2</span><span class="o">.</span><span class="n">drawContours</span><span class="p">(</span><span class="n">contours_image</span><span class="p">,</span> <span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">cX</span> <span class="ow">is</span> <span class="ow">not</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">cY</span> <span class="ow">is</span> <span class="ow">not</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="p">(</span><span class="n">cX</span><span class="p">,</span> <span class="n">cY</span><span class="p">),</span> <span class="n">radio</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">sm</span><span class="o">.</span><span class="n">updateBarriers</span><span class="p">(</span><span class="n">bar1</span><span class="p">,</span> <span class="n">bar2</span><span class="p">)</span>
+    <span class="n">contador</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">checkBarrier</span><span class="p">(</span><span class="n">cY</span><span class="p">)</span>
+
+        
+    <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">bar1</span><span class="p">),</span>
+             <span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">bar1</span><span class="p">),</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">lineThickness</span><span class="p">)</span>
+
+    <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">bar2</span><span class="p">),</span>
+             <span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">bar2</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">lineThickness</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">showProcess</span><span class="p">:</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">&quot;People Contours&quot;</span><span class="p">,</span> <span class="n">contours_image</span><span class="p">)</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">&quot;Background&quot;</span><span class="p">,</span> <span class="n">background</span><span class="p">)</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">&quot;Gray&quot;</span><span class="p">,</span> <span class="n">gray</span><span class="p">)</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">&quot;Diff&quot;</span><span class="p">,</span> <span class="n">diff</span><span class="p">)</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">&quot;Thresh&quot;</span><span class="p">,</span> <span class="n">thres</span><span class="p">)</span>
+
+
+    <span class="k">return</span> <span class="n">image</span><span class="p">,</span> <span class="n">contador</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
