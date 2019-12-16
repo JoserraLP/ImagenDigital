@@ -24,10 +24,13 @@ def check_video(f):
             args[0].MainWindow.loadVideoButton.setEnabled(True)
             args[0].MainWindow.pauseVideoButton.setEnabled(False)
             args[0].MainWindow.startVideoButton.setEnabled(False)
+            args[0].MainWindow.allProcessVideo.setEnabled(False)
             args[0].MainWindow.video.clear()
             args[0].MainWindow.filter_video.clear()
             args[0].MainWindow.video.setText('El video ha terminado')
             args[0].MainWindow.filter_video.setText('El video ha terminado')
+            args[0].timer_filter.stop()
+            args[0].timer_frames.stop()
     return wrapper
 
 
@@ -71,6 +74,10 @@ class MainWindow ():
         self.MainWindow.allProcessVideo.setEnabled(False)
         self.MainWindow.closeAllProcessVideo.setEnabled(False)
 
+        self.MainWindow.velocity.setEnabled(False)
+
+        self.MainWindow.threshold.setEnabled(False)
+
         self.MainWindow.velocity.setMinimum(3)
         self.MainWindow.velocity.setMaximum(100)
         self.MainWindow.velocity.setSingleStep(1)
@@ -111,12 +118,12 @@ class MainWindow ():
             self.total_frames = int(self.video.get(cv2.CAP_PROP_FRAME_COUNT))
 
             self.video_progress = 0
-            
+            self.timer_progress.stop()
+
             # Deshabilitar boton
             self.MainWindow.loadVideoButton.setEnabled(False)
             # Habilitar botones
             self.MainWindow.startVideoButton.setEnabled(True)
-            self.MainWindow.allProcessVideo.setEnabled(True)
 
             self.MainWindow.video.clear()
             self.MainWindow.filter_video.clear()
@@ -140,6 +147,12 @@ class MainWindow ():
 
             self.first_frame = self.cap.copy()
             self.initialized = False
+        
+        self.MainWindow.velocity.setEnabled(True)
+
+        self.MainWindow.threshold.setEnabled(True)
+
+        self.MainWindow.allProcessVideo.setEnabled(True)
 
         # Establecer el timer del cómputo
         self.timer_filter.timeout.connect(self.compute)
@@ -152,6 +165,7 @@ class MainWindow ():
         #Timer para barra de progreso del video
         self.timer_progress.timeout.connect(self.progressVideo)
         self.timer_progress.start(self.velocity)
+
 
         self.MainWindow.startVideoButton.setEnabled(False)
         self.MainWindow.pauseVideoButton.setEnabled(True)
