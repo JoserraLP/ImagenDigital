@@ -172,7 +172,6 @@ class MainWindow ():
             Callback enlazado con el boton Start Video para gestionar la reanudacion y comienzo
             del video
         """
-        self.velocity = 99
         # Establecer el timer del cómputo
         self.timer_filter.timeout.connect(self.compute)
         self.timer_filter.start(self.velocity)

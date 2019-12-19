@@ -90,7 +90,6 @@ class Tracker():
 			- contador  :  Contador de vehiculos en la imagen de entrada
 
 		"""
-
 		image = img.copy()
 
 		lineThickness = 2
