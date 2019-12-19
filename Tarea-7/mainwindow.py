@@ -8,6 +8,7 @@ from PyQt5.QtGui import *
 import numpy as np
 import cvqtmanage as mng
 import background_subtraction as bs
+import tracker as t
 
 MAX_IMG = 2
 
@@ -58,6 +59,8 @@ class MainWindow ():
         # Crear los videos de Qt
         self.qt_video = [self.MainWindow.video, self.MainWindow.filter_video]
         self.cv_video = []
+
+        self.tracker = t.Tracker()
 
         # Capturar el video
         self.video = cv2.VideoCapture()
@@ -148,7 +151,7 @@ class MainWindow ():
             # Obtener el primer frame
             self.first_frame = self.cap.copy()
             self.initialized = False
-        
+        self.velocity = 99
         # Establecer el timer del cómputo
         self.timer_filter.timeout.connect(self.compute)
         self.timer_filter.start(self.velocity)
@@ -198,7 +201,7 @@ class MainWindow ():
             (self.MainWindow.barrier.value() / 100) * self.cv_video[0].shape[0])
 
         # Devolver la imagen procesada y el contador de coches
-        self.cv_video[1], add = bs.background_subtraction(self.cv_video[0], self.first_frame, threshold=self.MainWindow.threshold.value(
+        self.cv_video[1], add = self.tracker.background_subtraction(self.cv_video[0], self.first_frame, threshold=self.MainWindow.threshold.value(
         ), bar=bar_cal, showProcess=self.show_process)
         self.cv_video = list(map(lambda vid: cv2.resize(
             vid, (350, 250), cv2.INTER_CUBIC), self.cv_video))
