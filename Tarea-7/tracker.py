@@ -35,34 +35,11 @@ class Tracker():
 		
 		subtracted = self.backSub.apply(processed_img)
 
-		_, thres = cv2.threshold(subtracted, threshold, 255, cv2.THRESH_BINARY)
+		_, subtracted = cv2.threshold(subtracted, threshold, 255, cv2.THRESH_BINARY)
 			
-		thres = cv2.dilate(thres, None, iterations=2)
-		"""
-		cnts = cv2.findContours(thres.copy(), cv2.RETR_EXTERNAL,
-			cv2.CHAIN_APPROX_SIMPLE)
-		cnts = imutils.grab_contours(cnts)
+		subtracted = cv2.dilate(subtracted, None, iterations=2)
 
-		contours_image = original_image.copy()
-
-		if(len(cnts)!=0):
-			c = max(cnts, key = cv2.contourArea)
-		
-			M = cv2.moments(c)
-			cX = int(M['m10'] / M['m00'])
-			cY = int(M['m01'] / M['m00'])
-			cv2.drawContours(contours_image, [c], -1, (0, 255, 0), 2)
-
-			if (cX is not 0 and cY is not 0):
-				cv2.circle(contours_image, (cX, cY), 1, (0, 128, 128), -1)
-			x, y, w, h = cv2.boundingRect(c)
-			# Pintamos el rectangulo alrededor del contorno
-			cv2.rectangle(contours_image, (x, y), (x + w, y + h), (255, 0, 0), 2)
-
-		cv2.imshow("Test", contours_image)
-		"""
-
-		return thres
+		return subtracted
 
 	def background_subtraction(
 		self,
