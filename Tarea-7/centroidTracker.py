@@ -1,39 +1,68 @@
-# import the necessary packages
 from scipy.spatial import distance as dist
 from collections import OrderedDict
 import numpy as np
  
 class CentroidTracker:
+	""" `CentroidTracker`
+
+		Clase que gestiona el trackeo de los centroides de los objetos
+	"""
 	def __init__(self, maxDisappeared=50, maxDistance = 50):
-		# initialize the next unique object ID along with two ordered
-		# dictionaries used to keep track of mapping a given object
-		# ID to its centroid and number of consecutive frames it has
-		# been marked as "disappeared", respectively
+		""" Inicializa la siguiente objectID única junto con dos diccionarios ordenados utilizados 
+			para realizar un seguimiento de la asignación de una ID de objeto dada a su centroide 
+			y el número de fotogramas consecutivos que se ha marcado como "desaparecido", respectivamente
+
+			Parameters
+			----------
+			- maxDisappeared  :  Numero de frames maximos para desaparecer
+			- maxDistance  :  Distancia maxima para que se considere un objeto distinto
+		"""
+
 		self.nextObjectID = 0
 		self.objects = OrderedDict()
 		self.disappeared = OrderedDict()
- 
-		# store the number of maximum consecutive frames a given
-		# object is allowed to be marked as "disappeared" until we
-		# need to deregister the object from tracking
+
 		self.maxDisappeared = maxDisappeared
 
 		self.maxDistance = maxDistance
 
 	def register(self, centroid):
-		# when registering an object we use the next available object
-		# ID to store the centroid
+		""" `register`
+		
+			Registra un objeto usando el siguiente id disponible para guardar el centroide
+
+			Parameters
+			----------
+			- centroid  :  Centroide del objeto
+		"""
+
 		self.objects[self.nextObjectID] = centroid
 		self.disappeared[self.nextObjectID] = 0
 		self.nextObjectID += 1
 
 	def deregister(self, objectID):
+		""" `deregister`
+		
+			Derregistra un objeto 
+
+			Parameters
+			----------
+			- objectID  :  Id del objeto
+		"""
 		# to deregister an object ID we delete the object ID from
 		# both of our respective dictionaries
 		del self.objects[objectID]
 		del self.disappeared[objectID]
 
 	def update(self, centroids):
+		""" `update`
+
+			Actualiza los centroides de los objetos e identifica nuevos objetos
+
+			Parameters
+			----------
+			- centroids  :  Lista de centroides
+		"""
 		# check to see if the list of input bounding box rectangles
 		# is empty
 		if len(centroids) == 0:

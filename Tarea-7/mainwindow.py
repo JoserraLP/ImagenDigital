@@ -172,15 +172,6 @@ class MainWindow ():
             Callback enlazado con el boton Start Video para gestionar la reanudacion y comienzo
             del video
         """
-
-        # En caso de que sea la primera vez, se obtiene el primer frame para el calculo
-        if (self.initialized):
-            # Obtener la imagen de la camara
-            _, self.cap = self.video.read()
-
-            # Obtener el primer frame
-            self.first_frame = self.cap.copy()
-            self.initialized = False
         self.velocity = 99
         # Establecer el timer del cómputo
         self.timer_filter.timeout.connect(self.compute)
@@ -243,10 +234,8 @@ class MainWindow ():
             (self.MainWindow.barrier.value() / 100) * self.cv_video[0].shape[0])
 
         # Devolver la imagen procesada y el contador de coches
-        self.cv_video[1], add = self.tracker.background_subtraction(self.cv_video[0], self.first_frame, threshold=self.MainWindow.threshold.value(
-        ), bar=bar_cal, showProcess=self.show_process)
-        self.cv_video = list(map(lambda vid: cv2.resize(
-            vid, (350, 250), cv2.INTER_CUBIC), self.cv_video))
+        self.cv_video[1], add = self.tracker.car_counter(self.cv_video[0], threshold=self.MainWindow.threshold.value(), bar=bar_cal, showProcess=self.show_process)
+        self.cv_video = list(map(lambda vid: cv2.resize(vid, (350, 250), cv2.INTER_CUBIC), self.cv_video))
         
         self.contador +=add
 

@@ -7,15 +7,27 @@ from TrackableCar import TrackableCar
 
 
 class Tracker():
+	""" `Tracker`
+		
+		Clase para realizar el proceso de tracking de vehiculos.
+	"""
 
 	def __init__(self):
 		self.backSub = cv2.createBackgroundSubtractorMOG2(history=50, varThreshold=50,detectShadows=False)
 		self.tracker = ct.CentroidTracker(maxDisappeared=10, maxDistance=30)
 		self.trackableCars = {}
-		self.carsClassifier = cv2.CascadeClassifier('cars.xml')
-
 	
 	def roi(self,img, vertices):
+		"""	`roi`
+			
+			Devuelve la mascara de la region de interes (ROI) calculada por los vertices
+
+			Parameters
+			----------
+
+			- img  :  Imagen de entrada
+			- vertices  :  Lista de vertices
+		"""
 		# mascara
 		mask = np.zeros_like(img)
 		# rellenamos la mascara
@@ -25,6 +37,16 @@ class Tracker():
 		return masked
 
 	def process_img(self,original_image, threshold):
+		""" `process_img`
+
+			Devuelve la imagen de entrada filtrada y le aplica el metodo MOG2
+
+			Parameters
+			----------
+
+			- original_image  :  Imagen de entrada
+			- threshold  :  Umbral para aplicar el filtro threshold
+		"""
 		processed_img = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
 		processed_img = cv2.GaussianBlur(processed_img, (5, 5), 0)
 		vertices = np.array([[394,358], [337,178],
@@ -41,25 +63,22 @@ class Tracker():
 
 		return subtracted
 
-	def background_subtraction(
+	def car_counter(
 		self,
         img,
-        background,
         threshold=150,
         bar=80,
         radio=15,
         showProcess=False):
 
-		""" `background_subtraction` 
+		""" `car_counter` 
 		
-			Aplica una serie de filtros y calcula la diferencia con absdiff entre background e img
-			devolviendo una imagen dibujada con las barreras y el centroide y el contador de elementos.
+			Devuelve la imagen de entrada con los coches encontrados encuadrado y el contador de coches
 
-			Parametros
+			Parameters
 			----------
 			- img  :  Imagen de entrada
 			- background  :  Imagen de fondo de referencia para realizar la diferencia
-			- sm  :  Maquina de estados
 			- threshold  :  Umbral para descartar imagenes por debajo de este
 			- bar  :  Barrera superior
 			- radio :  Radio del circulo que representa el centroide
@@ -67,8 +86,8 @@ class Tracker():
 
 			Return
 			------
-			- image  :  Imagen de entrada filtrada y dibujada con las barreras y el centroide
-			- contador  :  Contador de elementos
+			- image  :  Imagen de entrada
+			- contador  :  Contador de vehiculos en la imagen de entrada
 
 		"""
 
@@ -76,13 +95,10 @@ class Tracker():
 
 		lineThickness = 2
 
-
 		output = self.process_img(image, threshold)
 
 		contours, hierarchy = cv2.findContours(output, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 		
-		# area minima de los contornos
-		#minarea = 300*0.0050*bar
 		minarea = 400
 
 		# area maxima de los contornos
@@ -100,29 +116,21 @@ class Tracker():
 				if minarea < area < maxarea: # Si el area esta entre el minimo y el maximo
 
 					# Centroides de los contornos
-					cnt = contours[i]
-					M = cv2.moments(cnt)
-					#cX = int(M['m10'] / M['m00'])
-					#cY = int(M['m01'] / M['m00'])
+					cnt = contours[i]	
 					x, y, w, h = cv2.boundingRect(cnt)
 					cX = int((x + x+w) / 2.0)
 					cY = int((y + y+h) / 2.0)
 
 					if (cX is not 0 and cY is not 0):
 						centroids.append((cX,cY))
-						
 						# Pintamos el rectangulo alrededor del contorno
 						cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
-						
 						
 		objects = self.tracker.update(centroids)
 					
 		for (objectID, centroid) in objects.items():
 			
-
-			
 			tc = self.trackableCars.get(objectID, None)
-
 
 			if tc is None:
 				tc = TrackableCar(objectID,centroid)
@@ -134,12 +142,9 @@ class Tracker():
 						contador+=1
 						tc.counted = True
 						cv2.circle(image, (centroid[0], centroid[1]), radio, (0, 128, 128), -1)
-						text ="ID {}".format(objectID)
-						print(text)
 					
 			self.trackableCars[objectID] = tc
-
-								
+	
 		cv2.line(image, (0, bar),
 				(image.shape[1], bar), (255, 255, 0), lineThickness)
 
