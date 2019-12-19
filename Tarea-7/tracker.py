@@ -26,7 +26,7 @@ class Tracker():
 
 	def process_img(self,original_image, threshold):
 		processed_img = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
-		#processed_img = cv2.GaussianBlur(processed_img, (11, 11), 0)
+		processed_img = cv2.GaussianBlur(processed_img, (5, 5), 0)
 		vertices = np.array([[394,358], [337,178],
 							[382,178],[464,149],
 							[512,150],[638,215],
@@ -34,11 +34,11 @@ class Tracker():
 		processed_img = self.roi(processed_img, [vertices])
 		
 		subtracted = self.backSub.apply(processed_img)
-		"""
+
 		_, thres = cv2.threshold(subtracted, threshold, 255, cv2.THRESH_BINARY)
 			
 		thres = cv2.dilate(thres, None, iterations=2)
-		
+		"""
 		cnts = cv2.findContours(thres.copy(), cv2.RETR_EXTERNAL,
 			cv2.CHAIN_APPROX_SIMPLE)
 		cnts = imutils.grab_contours(cnts)
@@ -62,7 +62,7 @@ class Tracker():
 		cv2.imshow("Test", contours_image)
 		"""
 
-		return subtracted
+		return thres
 
 	def background_subtraction(
 		self,
@@ -99,75 +99,70 @@ class Tracker():
 
 		lineThickness = 2
 
-		if neural == False:
 
-			output = self.process_img(image, threshold)
+		output = self.process_img(image, threshold)
 
-			contours, hierarchy = cv2.findContours(output, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-			
-			# area minima de los contornos
-			#minarea = 300*0.0050*bar
-			minarea = 400
-
-			# area maxima de los contornos
-			maxarea = 10000
-			contador = 0
-			
-			centroids = []
-
-			for i in range(len(contours)):
-
-				if hierarchy[0, i, 3] == -1:  # Utilizamos la jerarquia para contar solo los contornos padres
-
-					area = cv2.contourArea(contours[i])  # area del contorno
-
-					if minarea < area < maxarea: # Si el area esta entre el minimo y el maximo
-
-						# Centroides de los contornos
-						cnt = contours[i]
-						M = cv2.moments(cnt)
-						#cX = int(M['m10'] / M['m00'])
-						#cY = int(M['m01'] / M['m00'])
-						x, y, w, h = cv2.boundingRect(cnt)
-						cX = int((x + x+w) / 2.0)
-						cY = int((y + y+h) / 2.0)
-
-						if (cX is not 0 and cY is not 0):
-							centroids.append((cX,cY))
-							
-							# Pintamos el rectangulo alrededor del contorno
-							cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
-							
-							
-			objects = self.tracker.update(centroids)
-						
-			for (objectID, centroid) in objects.items():
-				
-
-				
-				tc = self.trackableCars.get(objectID, None)
-
-
-				if tc is None:
-					tc = TrackableCar(objectID,centroid)
-
-				else:
-					tc.centroids.append(centroid)
-					if not tc.counted:
-						if centroid[1] > bar:  # Si la ordenada del centroide supera la barrera
-							contador+=1
-							tc.counted = True
-							cv2.circle(image, (centroid[0], centroid[1]), radio, (0, 128, 128), -1)
-							text ="ID {}".format(objectID)
-							print(text)
-						
-				self.trackableCars[objectID] = tc
-
-		else:
-			pass
+		contours, hierarchy = cv2.findContours(output, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 		
+		# area minima de los contornos
+		#minarea = 300*0.0050*bar
+		minarea = 400
+
+		# area maxima de los contornos
+		maxarea = 10000
+		contador = 0
+		
+		centroids = []
+
+		for i in range(len(contours)):
+
+			if hierarchy[0, i, 3] == -1:  # Utilizamos la jerarquia para contar solo los contornos padres
+
+				area = cv2.contourArea(contours[i])  # area del contorno
+
+				if minarea < area < maxarea: # Si el area esta entre el minimo y el maximo
+
+					# Centroides de los contornos
+					cnt = contours[i]
+					M = cv2.moments(cnt)
+					#cX = int(M['m10'] / M['m00'])
+					#cY = int(M['m01'] / M['m00'])
+					x, y, w, h = cv2.boundingRect(cnt)
+					cX = int((x + x+w) / 2.0)
+					cY = int((y + y+h) / 2.0)
+
+					if (cX is not 0 and cY is not 0):
+						centroids.append((cX,cY))
+						
+						# Pintamos el rectangulo alrededor del contorno
+						cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
 						
 						
+		objects = self.tracker.update(centroids)
+					
+		for (objectID, centroid) in objects.items():
+			
+
+			
+			tc = self.trackableCars.get(objectID, None)
+
+
+			if tc is None:
+				tc = TrackableCar(objectID,centroid)
+
+			else:
+				tc.centroids.append(centroid)
+				if not tc.counted:
+					if centroid[1] > bar:  # Si la ordenada del centroide supera la barrera
+						contador+=1
+						tc.counted = True
+						cv2.circle(image, (centroid[0], centroid[1]), radio, (0, 128, 128), -1)
+						text ="ID {}".format(objectID)
+						print(text)
+					
+			self.trackableCars[objectID] = tc
+
+								
 		cv2.line(image, (0, bar),
 				(image.shape[1], bar), (255, 255, 0), lineThickness)
 
