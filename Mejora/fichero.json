@@ -1,0 +1,94 @@
+{
+  "focos": [
+    {
+    "brillo"      : 100000,
+    "luzdifusa"   : [1.0, 1.0, 1.0, 1.0],
+    "luzambiente" : [0.0, 0.0, 0.0, 1.0],
+    "luzspecular": [1.0, 1.0, 1.0, 1.0],
+    "posicion"    : [0.0, 0.0, 1.0, 0.0]
+    },{
+    "brillo"      : 20,
+    "luzdifusa"   : [0.5, 0.8, 0.0, 1.0],
+    "luzambiente" : [0.50, 0.50, 0.50, 1.0],
+    "luzspecular": [0.20, 0.20, 0.20, 1.0],
+    "posicion"    : [2.0, 1.0, -6.0, 0.0]
+  },{
+    "brillo"      : 20,
+    "luzdifusa"   : [0.9, 0.7, 0.5, 1.0],
+    "luzambiente" : [0.20, 0.20, 0.20, 1.0],
+    "luzspecular": [0.50, 0.50, 0.50, 1.0],
+    "posicion"    : [3.0, 0.5, 0.0, 0.0]
+  },{
+    "brillo"      : 20,
+    "luzdifusa"   : [0.9, 0.9, 0.9, 1.0],
+    "luzambiente" : [0.0, 0.0, 0.0, 1.0],
+    "luzspecular": [0.10, 0.10, 0.10, 1.0],
+    "posicion"    : [0.0, 9.0, 6.0, 0.0]
+  },{
+    "brillo"      : 20,
+    "luzdifusa"   : [1.0, 0.0, 0.0, 1.0],
+    "luzambiente" : [1.0, 0.50, 1.0, 1.0],
+    "luzspecular": [0.20, 0.20, 0.20, 1.0],
+    "posicion"    : [0.0, 0.0, 0.0, 0.0]
+  },{
+    "brillo"      : 20,
+    "luzdifusa"   : [0.7, 0.3, 0.5, 1.0],
+    "luzambiente" : [0.20, 0.35, 0.50, 1.0],
+    "luzspecular": [0.60, 0.30, 0.50, 1.0],
+    "posicion"    : [4.0, 4.0, 4.0, 0.0]
+  },{
+    "brillo"      : 20,
+    "luzdifusa"   : [0.0, 0.1, 0.1, 1.0],
+    "luzambiente" : [0.10, 0.50, 0.10, 1.0],
+    "luzspecular": [0.30, 0.50, 0.20, 1.0],
+    "posicion"    : [0.0, -3.0, -5.0, 0.0]
+  }],
+  "camaras" : [
+    {
+    "ejex" : 30,
+    "ejey" : 10,
+    "ejez" : 10,
+    "centrox" : 0,
+    "centroy" : 0,
+    "centroz" : 0,
+    "upx" : 0,
+    "upy" : 1,
+    "upz" : 0
+    },{
+    "ejex" : 25,
+    "ejey" : 0,
+    "ejez" : 0,
+    "centrox" : 0,
+    "centroy" : 0,
+    "centroz" : 0,
+    "upx" : 1,
+    "upy" : 1,
+    "upz" : 1
+    },{
+    "ejex" : 0,
+    "ejey" : 35,
+    "ejez" : 25,
+    "centrox" : 0,
+    "centroy" : 0,
+    "centroz" : 0,
+    "upx" : 1,
+    "upy" : 0,
+    "upz" : 1
+    }],
+"materiales" : [{
+    "brillo"      : 100.0,
+    "luzdifusa"   : [0.75164, 0.60648, 0.22648, 1.0], 
+    "luzambiente" : [0.24725, 0.1995, 0.0745, 1.0],
+    "luzspecular": [0.628281, 0.555802, 0.366065, 1.0]
+},{
+    "brillo"      : 10.0,
+    "luzdifusa"   : [0.5,0.5,0.5,1.0],
+    "luzambiente" : [0.05,0.05,0.05,1.0],
+    "luzspecular": [0.7,0.7,0.7,1.0]
+},{
+    "brillo"      : 25.6,
+    "luzdifusa"   : [0.714, 0.4284, 0.18144, 1.0],
+    "luzambiente" : [0.2125, 0.1275, 0.054, 1.0],
+    "luzspecular": [0.393548, 0.271906, 0.166721, 1.0]
+}]
+}
