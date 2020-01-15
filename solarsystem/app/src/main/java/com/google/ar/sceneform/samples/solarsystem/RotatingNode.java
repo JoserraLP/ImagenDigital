@@ -1,18 +1,3 @@
-/*
- * Copyright 2018 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.google.ar.sceneform.samples.solarsystem;
 
 import android.animation.ObjectAnimator;
@@ -24,9 +9,9 @@ import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.QuaternionEvaluator;
 import com.google.ar.sceneform.math.Vector3;
 
-/** Node demonstrating rotation and transformations. */
 public class RotatingNode extends Node {
-  // We'll use Property Animation to make this node rotate.
+
+  // Usamos una animación para hacer que el nodo tenga rotación
   @Nullable private ObjectAnimator orbitAnimation = null;
   private float degreesPerSecond = 90.0f;
 
@@ -48,19 +33,21 @@ public class RotatingNode extends Node {
   public void onUpdate(FrameTime frameTime) {
     super.onUpdate(frameTime);
 
-    // Animation hasn't been set up.
+    // Si la animacion no se ha establecido no hacemos nada
     if (orbitAnimation == null) {
       return;
     }
 
-    // Check if we need to change the speed of rotation.
+    // Comprobamos si necesitamos cambiar la velocidad de rotacion
     float speedMultiplier = getSpeedMultiplier();
 
-    // Nothing has changed. Continue rotating at the same speed.
+    // Si no cambia nada, la velocidad de rotacion es la misma
     if (lastSpeedMultiplier == speedMultiplier) {
       return;
     }
 
+    // En caso de que la velocidad sea 0 se para la animacion de la orbita
+    // en otro caso se actualiza la velocidad de animacion
     if (speedMultiplier == 0.0f) {
       orbitAnimation.pause();
     } else {
@@ -73,7 +60,6 @@ public class RotatingNode extends Node {
     lastSpeedMultiplier = speedMultiplier;
   }
 
-  /** Sets rotation speed */
   public void setDegreesPerSecond(float degreesPerSecond) {
     this.degreesPerSecond = degreesPerSecond;
   }
@@ -100,6 +86,7 @@ public class RotatingNode extends Node {
     }
   }
 
+  // Metodo para comenzar la animacion
   private void startAnimation() {
     if (orbitAnimation != null) {
       return;
@@ -111,6 +98,7 @@ public class RotatingNode extends Node {
     orbitAnimation.start();
   }
 
+  // Metodo para parar la animacion
   private void stopAnimation() {
     if (orbitAnimation == null) {
       return;
@@ -119,12 +107,11 @@ public class RotatingNode extends Node {
     orbitAnimation = null;
   }
 
-  /** Returns an ObjectAnimator that makes this node rotate. */
+  /** Devuelve un  ObjectAnimator que hace que los nodos roten */
   private static ObjectAnimator createAnimator(boolean clockwise, float axisTiltDeg) {
-    // Node's setLocalRotation method accepts Quaternions as parameters.
-    // First, set up orientations that will animate a circle.
+    // En primer lugar establecemos las orientacions que animaran al circulo
     Quaternion[] orientations = new Quaternion[4];
-    // Rotation to apply first, to tilt its axis.
+    // La primera rotacion que se aplica es a los ejes
     Quaternion baseOrientation = Quaternion.axisAngle(new Vector3(1.0f, 0f, 0.0f), axisTiltDeg);
     for (int i = 0; i < orientations.length; i++) {
       float angle = i * 360 / (orientations.length - 1);
@@ -136,16 +123,16 @@ public class RotatingNode extends Node {
     }
 
     ObjectAnimator orbitAnimation = new ObjectAnimator();
-    // Cast to Object[] to make sure the varargs overload is called.
+    // Se realiza un cast para asegurarnos que la sobrecarga de parametros es correcta
     orbitAnimation.setObjectValues((Object[]) orientations);
 
     // Next, give it the localRotation property.
     orbitAnimation.setPropertyName("localRotation");
 
-    // Use Sceneform's QuaternionEvaluator.
+    // Usar el evaluador QuaternionEvaluator de Sceneform.
     orbitAnimation.setEvaluator(new QuaternionEvaluator());
 
-    //  Allow orbitAnimation to repeat forever
+    //  Permite a la variable orbitAnimation a que se repita indefinidamente
     orbitAnimation.setRepeatCount(ObjectAnimator.INFINITE);
     orbitAnimation.setRepeatMode(ObjectAnimator.RESTART);
     orbitAnimation.setInterpolator(new LinearInterpolator());

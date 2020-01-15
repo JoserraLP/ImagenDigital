@@ -1,18 +1,4 @@
-/*
- * Copyright 2018 Google LLC.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 package com.google.ar.sceneform.samples.solarsystem;
 
 import android.net.Uri;
@@ -47,18 +33,25 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 /**
- * This is a simple example that shows how to create an augmented reality (AR) application using the
- * ARCore and Sceneform APIs.
+ * Vamos a utilizar las APIs de ARCore y Sceneform
  */
 public class SolarActivity extends AppCompatActivity {
+  
+  // Permiso asociado a la cámara
   private static final int RC_PERMISSIONS = 0x123;
+  // Para comprobar si los permisos se han aceptado
   private boolean cameraPermissionRequested;
 
+  // Detector de gestos
   private GestureDetector gestureDetector;
+
+  // Mensaje para cargar los datos
   private Snackbar loadingMessageSnackbar = null;
 
+  // Escena de AR donde se dibujaran los modelos
   private ArSceneView arSceneView;
 
+  // Todos los modelos que se van a utilizar, los planetas
   private ModelRenderable sunRenderable;
   private ModelRenderable mercuryRenderable;
   private ModelRenderable venusRenderable;
@@ -71,32 +64,34 @@ public class SolarActivity extends AppCompatActivity {
   private ModelRenderable neptuneRenderable;
   private ViewRenderable solarControlsRenderable;
 
+  // Ajustes del sistema solar
   private final SolarSettings solarSettings = new SolarSettings();
 
-  // True once scene is loaded
+  // Bandera para comprobar si la escena ha sido cargada correctamente
   private boolean hasFinishedLoading = false;
 
-  // True once the scene has been placed.
+  // Bandera para comprobar si la escena ha sido colocada correctamente
   private boolean hasPlacedSolarSystem = false;
 
-  // Astronomical units to meters ratio. Used for positioning the planets of the solar system.
+  // Unidad astronómica para calcular el radio. Se utiliza para el posicionamiento del sistema solar
   private static final float AU_TO_METERS = 0.5f;
 
   @Override
   @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
-  // CompletableFuture requires api level 24
+  // CompletableFuture requiere un nivel de API superior a 24
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
     if (!DemoUtils.checkIsSupportedDeviceOrFinish(this)) {
-      // Not a supported device.
+      // En caso de no encontrarnos en un dispositivo compatible se termina la ejecución.
       return;
     }
 
+    // Cargamos la disposión de la escena
     setContentView(R.layout.activity_solar);
     arSceneView = findViewById(R.id.ar_scene_view);
 
-    // Build all the planet models.
+    // Construimos todos los modelos de los planetas
     CompletableFuture<ModelRenderable> sunStage =
         ModelRenderable.builder().setSource(this, Uri.parse("Sol.sfb")).build();
     CompletableFuture<ModelRenderable> mercuryStage =
@@ -118,7 +113,7 @@ public class SolarActivity extends AppCompatActivity {
     CompletableFuture<ModelRenderable> neptuneStage =
         ModelRenderable.builder().setSource(this, Uri.parse("Neptune.sfb")).build();
 
-    // Build a renderable from a 2D View.
+    // Construimos una vista renderizable desde una vista en 2D
     CompletableFuture<ViewRenderable> solarControlsStage =
         ViewRenderable.builder().setView(this, R.layout.solar_controls).build();
 
@@ -136,12 +131,8 @@ public class SolarActivity extends AppCompatActivity {
             solarControlsStage)
         .handle(
             (notUsed, throwable) -> {
-              // When you build a Renderable, Sceneform loads its resources in the background while
-              // returning a CompletableFuture. Call handle(), thenAccept(), or check isDone()
-              // before calling get().
-
               if (throwable != null) {
-                DemoUtils.displayError(this, "Unable to load renderable", throwable);
+                DemoUtils.displayError(this, "No ha sido posible cargar los modelos", throwable);
                 return null;
               }
 
@@ -158,17 +149,17 @@ public class SolarActivity extends AppCompatActivity {
                 neptuneRenderable = neptuneStage.get();
                 solarControlsRenderable = solarControlsStage.get();
 
-                // Everything finished loading successfully.
+                // Cuando se han terminado de cargar todos los modelos se activa la bandera
                 hasFinishedLoading = true;
 
               } catch (InterruptedException | ExecutionException ex) {
-                DemoUtils.displayError(this, "Unable to load renderable", ex);
+                DemoUtils.displayError(this, "No ha sido posible cargar los modelos", ex);
               }
 
               return null;
             });
 
-    // Set up a tap gesture detector.
+    // Detector de gestos para detectar cuando el usuario pulsa en la pantalla
     gestureDetector =
         new GestureDetector(
             this,
@@ -185,23 +176,22 @@ public class SolarActivity extends AppCompatActivity {
               }
             });
 
-    // Set a touch listener on the Scene to listen for taps.
+    // Iniciamos el listener en la escena para que escuche cuando se toque la pantalla
     arSceneView
         .getScene()
         .setOnTouchListener(
             (HitTestResult hitTestResult, MotionEvent event) -> {
-              // If the solar system hasn't been placed yet, detect a tap and then check to see if
-              // the tap occurred on an ARCore plane to place the solar system.
+              // En caso de que el sistema solar no se haya dibujado, detectamos un toque en la pantalla
+              // y comprobamos si se ha realizado el toque en la escena de ARCore para establecer el sistema
               if (!hasPlacedSolarSystem) {
                 return gestureDetector.onTouchEvent(event);
               }
 
-              // Otherwise return false so that the touch event can propagate to the scene.
+              // En otro caso se devuelve false para que el toque se muestre en la escena
               return false;
             });
 
-    // Set an update listener on the Scene that will hide the loading message once a Plane is
-    // detected.
+    // Establecemos un listener de actualización en la escena que esconda el mensaje de carga cuando se ha detectado el plano
     arSceneView
         .getScene()
         .addOnUpdateListener(
@@ -226,7 +216,7 @@ public class SolarActivity extends AppCompatActivity {
               }
             });
 
-    // Lastly request CAMERA permission which is required by ARCore.
+    // Por último se solicitan permisos para utilizar la camara que es necesaria para utilizar ARCore
     DemoUtils.requestCameraPermission(this, RC_PERMISSIONS);
   }
 
@@ -238,8 +228,8 @@ public class SolarActivity extends AppCompatActivity {
     }
 
     if (arSceneView.getSession() == null) {
-      // If the session wasn't created yet, don't resume rendering.
-      // This can happen if ARCore needs to be updated or permissions are not granted yet.
+      // Si no se ha creado la sesion previamente no se deja de renderizar
+      // En casos que ARCore se tenga que actualizar o no se hayan dado los permisos necesarios
       try {
         Config.LightEstimationMode lightEstimationMode =
             Config.LightEstimationMode.ENVIRONMENTAL_HDR;
@@ -261,7 +251,7 @@ public class SolarActivity extends AppCompatActivity {
     try {
       arSceneView.resume();
     } catch (CameraNotAvailableException ex) {
-      DemoUtils.displayError(this, "Unable to get camera", ex);
+      DemoUtils.displayError(this, "Ha sido imposible utilizar la camara", ex);
       finish();
       return;
     }
@@ -292,11 +282,11 @@ public class SolarActivity extends AppCompatActivity {
       int requestCode, @NonNull String[] permissions, @NonNull int[] results) {
     if (!DemoUtils.hasCameraPermission(this)) {
       if (!DemoUtils.shouldShowRequestPermissionRationale(this)) {
-        // Permission denied with checking "Do not ask again".
+        // En caso de que se denieguen los permisos con la marca de "No volver a preguntar"
         DemoUtils.launchPermissionSettings(this);
       } else {
         Toast.makeText(
-                this, "Camera permission is needed to run this application", Toast.LENGTH_LONG)
+                this, "Los permisos de la camara son necesarios para ejecutar la aplicacion", Toast.LENGTH_LONG)
             .show();
       }
       finish();
@@ -307,7 +297,6 @@ public class SolarActivity extends AppCompatActivity {
   public void onWindowFocusChanged(boolean hasFocus) {
     super.onWindowFocusChanged(hasFocus);
     if (hasFocus) {
-      // Standard Android full-screen functionality.
       getWindow()
           .getDecorView()
           .setSystemUiVisibility(
@@ -323,7 +312,7 @@ public class SolarActivity extends AppCompatActivity {
 
   private void onSingleTap(MotionEvent tap) {
     if (!hasFinishedLoading) {
-      // We can't do anything yet.
+      // No hacemos nada si se da un toque y no ha terminado de cargar
       return;
     }
 
@@ -340,11 +329,15 @@ public class SolarActivity extends AppCompatActivity {
       for (HitResult hit : frame.hitTest(tap)) {
         Trackable trackable = hit.getTrackable();
         if (trackable instanceof Plane && ((Plane) trackable).isPoseInPolygon(hit.getHitPose())) {
-          // Create the Anchor.
+          // Creamos un ancla donde se da el toque para conectar el sistema solar
           Anchor anchor = hit.createAnchor();
           AnchorNode anchorNode = new AnchorNode(anchor);
           anchorNode.setParent(arSceneView.getScene());
+
+          // Creamos el sistema solar 
           Node solarSystem = createSolarSystem();
+
+          // Anclar el sistema solar al ancla
           anchorNode.addChild(solarSystem);
           return true;
         }
@@ -354,24 +347,42 @@ public class SolarActivity extends AppCompatActivity {
     return false;
   }
 
+  // Metodo para crear el sistema solar
   private Node createSolarSystem() {
+    // Creamos la base del sistema solar
     Node base = new Node();
-
+    
+    // Creamos el sol
     Node sun = new Node();
     sun.setParent(base);
+
+    // Colocamos el sol
     sun.setLocalPosition(new Vector3(0.0f, 0.5f, 0.0f));
 
+    // Creamos el modelo renderizado del sol
     Node sunVisual = new Node();
     sunVisual.setParent(sun);
+
+    // Establecemos el modelo renderizado
     sunVisual.setRenderable(sunRenderable);
+
+    // Establecemos la escala del modelo
     sunVisual.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
 
+    // Creamos los controles del sistema solar
     Node solarControls = new Node();
     solarControls.setParent(sun);
+
+    // Establecemos el modelo renderizado
     solarControls.setRenderable(solarControlsRenderable);
+
+    // Colocamos los controles del sol
     solarControls.setLocalPosition(new Vector3(0.0f, 0.25f, 0.0f));
 
+    // Establecemos la vista del controlador
     View solarControlsView = solarControlsRenderable.getView();
+
+    // Establecemos los controladores de velocidad de orbita
     SeekBar orbitSpeedBar = solarControlsView.findViewById(R.id.orbitSpeedBar);
     orbitSpeedBar.setProgress((int) (solarSettings.getOrbitSpeedMultiplier() * 10.0f));
     orbitSpeedBar.setOnSeekBarChangeListener(
@@ -389,6 +400,7 @@ public class SolarActivity extends AppCompatActivity {
           public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
+    // Establecemos los controladores de rotacion de orbita
     SeekBar rotationSpeedBar = solarControlsView.findViewById(R.id.rotationSpeedBar);
     rotationSpeedBar.setProgress((int) (solarSettings.getRotationSpeedMultiplier() * 10.0f));
     rotationSpeedBar.setOnSeekBarChangeListener(
@@ -406,10 +418,12 @@ public class SolarActivity extends AppCompatActivity {
           public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
-    // Toggle the solar controls on and off by tapping the sun.
+    // Activamos los controles del sistema solar cuando damos un toque en el sol
     sunVisual.setOnTapListener(
         (hitTestResult, motionEvent) -> solarControls.setEnabled(!solarControls.isEnabled()));
 
+    // Creamos los planetas con los atributos deseados, aquellos planetas que tengan satelites
+    // deben crearse como variables para definirlas como los padres de los satelites
     createPlanet("Mercury", sun, 0.4f, 47f, mercuryRenderable, 0.019f, 0.03f);
 
     createPlanet("Venus", sun, 0.7f, 35f, venusRenderable, 0.0475f, 2.64f);
@@ -431,6 +445,7 @@ public class SolarActivity extends AppCompatActivity {
     return base;
   }
 
+  // Metodo para crear los planetas
   private Node createPlanet(
       String name,
       Node parent,
@@ -439,14 +454,15 @@ public class SolarActivity extends AppCompatActivity {
       ModelRenderable renderable,
       float planetScale,
       float axisTilt) {
-    // Orbit is a rotating node with no renderable positioned at the sun.
-    // The planet is positioned relative to the orbit so that it appears to rotate around the sun.
-    // This is done instead of making the sun rotate so each planet can orbit at its own speed.
+
+    // La orbita es de tipo RotatingNode debido a que se busca que cada planeta rote con su propia velocidad
+
     RotatingNode orbit = new RotatingNode(solarSettings, true, false, 0);
     orbit.setDegreesPerSecond(orbitDegreesPerSecond);
     orbit.setParent(parent);
 
-    // Create the planet and position it relative to the sun.
+    // Creamos el planeta y su posición relativa con el Sol 
+
     Planet planet =
         new Planet(
             this, name, planetScale, orbitDegreesPerSecond, axisTilt, renderable, solarSettings);
@@ -456,6 +472,7 @@ public class SolarActivity extends AppCompatActivity {
     return planet;
   }
 
+  // Metodo para mostrar el mensaje de carga
   private void showLoadingMessage() {
     if (loadingMessageSnackbar != null && loadingMessageSnackbar.isShownOrQueued()) {
       return;
@@ -470,6 +487,7 @@ public class SolarActivity extends AppCompatActivity {
     loadingMessageSnackbar.show();
   }
 
+  // Metodo para ocultar el mensaje de carga
   private void hideLoadingMessage() {
     if (loadingMessageSnackbar == null) {
       return;

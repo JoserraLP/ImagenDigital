@@ -1,18 +1,3 @@
-/*
- * Copyright 2018 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.google.ar.sceneform.samples.solarsystem;
 
 import android.content.Context;
@@ -26,21 +11,10 @@ import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 
-/**
- * Node that represents a planet.
- *
- * <p>The planet creates two child nodes when it is activated:
- *
- * <ul>
- *   <li>The visual of the planet, rotates along it's own axis and renders the planet.
- *   <li>An info card, renders an Android View that displays the name of the planerendt. This can be
- *       toggled on and off.
- * </ul>
- *
- * The planet is rendered by a child instead of this node so that the spinning of the planet doesn't
- * make the info card spin as well.
- */
+// Node representa un planeta
 public class Planet extends Node implements Node.OnTapListener {
+
+  // Atributos del planeta
   private final String planetName;
   private final float planetScale;
   private final float orbitDegreesPerSecond;
@@ -48,7 +22,10 @@ public class Planet extends Node implements Node.OnTapListener {
   private final ModelRenderable planetRenderable;
   private final SolarSettings solarSettings;
 
+  // Informacion del planeta
   private Node infoCard;
+
+  // Visual del planeta
   private RotatingNode planetVisual;
   private final Context context;
 
@@ -77,7 +54,7 @@ public class Planet extends Node implements Node.OnTapListener {
   public void onActivate() {
 
     if (getScene() == null) {
-      throw new IllegalStateException("Scene is null!");
+      throw new IllegalStateException("¡La escena está vacia!");
     }
 
     if (infoCard == null) {
@@ -97,14 +74,12 @@ public class Planet extends Node implements Node.OnTapListener {
               })
           .exceptionally(
               (throwable) -> {
-                throw new AssertionError("Could not load plane card view.", throwable);
+                throw new AssertionError("No es posible cargar la tarjeta de informacion", throwable);
               });
     }
 
     if (planetVisual == null) {
-      // Put a rotator to counter the effects of orbit, and allow the planet orientation to remain
-      // of planets like Uranus (which has high tilt) to keep tilted towards the same direction
-      // wherever it is in its orbit.
+      // Creamos un contador de rotaciones que permite manteres la orientacion independientemente de la orbita
       RotatingNode counterOrbit = new RotatingNode(solarSettings, true, true, 0f);
       counterOrbit.setDegreesPerSecond(orbitDegreesPerSecond);
       counterOrbit.setParent(this);
@@ -130,11 +105,7 @@ public class Planet extends Node implements Node.OnTapListener {
     if (infoCard == null) {
       return;
     }
-
-    // Typically, getScene() will never return null because onUpdate() is only called when the node
-    // is in the scene.
-    // However, if onUpdate is called explicitly or if the node is removed from the scene on a
-    // different thread during onUpdate, then getScene may be null.
+    
     if (getScene() == null) {
       return;
     }
