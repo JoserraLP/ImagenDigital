@@ -1,4 +1,4 @@
-package com.google.ar.sceneform.samples.solarsystem;
+package com.imagendigital.ar.planetario;
 
 /** Ajustes del sistema solar tales como rotacion o velocidad */
 public class SolarSettings {

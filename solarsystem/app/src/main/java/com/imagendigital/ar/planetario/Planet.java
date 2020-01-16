@@ -1,4 +1,4 @@
-package com.google.ar.sceneform.samples.solarsystem;
+package com.imagendigital.ar.planetario;
 
 import android.content.Context;
 import android.view.MotionEvent;
@@ -10,6 +10,7 @@ import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
+import com.imagendigital.ar.planetario.R;
 
 // Node representa un planeta
 public class Planet extends Node implements Node.OnTapListener {

@@ -1,5 +1,5 @@
 
-package com.google.ar.sceneform.samples.solarsystem;
+package com.imagendigital.ar.planetario;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,6 +29,8 @@ import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
+import com.imagendigital.ar.planetario.R;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 

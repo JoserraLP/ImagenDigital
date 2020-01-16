@@ -1,4 +1,4 @@
-package com.google.ar.sceneform.samples.solarsystem;
+package com.imagendigital.ar.planetario;
 
 import android.animation.ObjectAnimator;
 import android.support.annotation.Nullable;
